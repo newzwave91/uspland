@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USP PREMIUM | 고소득 병의원 절세 시뮬레이션</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <style>
+        :root {
+            --bg-white: #ffffff;
+            --bg-light: #f5f5f7; /* Apple Gray */
+            --accent-gold: #c5a059; /* Muted Premium Gold */
+            --accent-gold-hover: #b08e4a;
+            --text-main: #1d1d1f; /* Near Black */
+            --text-sub: #6e6e73; /* Apple Sub Text */
+            --error-red: #ff3b30;
+            --border: #e5e5e7;
+        }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; letter-spacing: -0.03em; }
+        body { font-family: 'Pretendard', sans-serif; margin: 0; background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--bg-white); box-shadow: 0 0 50px rgba(0,0,0,0.03); overflow: hidden; }
+
+        /* 🔴 히어로 섹션 (Apple Style Minimal) */
+        .hero { padding: 100px 30px 80px; text-align: center; background: var(--bg-white); }
+        .hero-tag { display: inline-block; padding: 6px 16px; border: 1px solid var(--accent-gold); border-radius: 50px; color: var(--accent-gold); font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
+        .hero h1 { font-size: 32px; line-height: 1.25; font-weight: 800; word-break: keep-all; margin: 0; }
+        .hero h1 span { color: var(--accent-gold); }
+        .hero p { font-size: 17px; color: var(--text-sub); margin-top: 30px; font-weight: 400; line-height: 1.7; }
+
+        /* 😣 페인포인트 섹션 (White Card UI) */
+        .pain-section { padding: 80px 25px; background: var(--bg-light); }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0 0 15px 0; }
+        .section-header p { font-size: 15px; color: var(--text-sub); margin: 0; }
+        
+        .pain-list { list-style: none; padding: 0; }
+        .pain-item { background: var(--bg-white); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 15px; display: flex; align-items: center; transition: 0.3s; }
+        .pain-item:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
+        .pain-item .bullet { color: var(--accent-gold); font-size: 22px; font-weight: bold; margin-right: 20px; }
+        .pain-item p { margin: 0; font-size: 15px; font-weight: 600; color: #424245; }
+
+        /* 📊 현실 직시 섹션 (Clean Data Card) */
+        .data-section { padding: 80px 25px; background: var(--bg-white); }
+        .numbers-card { background: var(--bg-light); border: 1px solid var(--border); border-radius: 28px; padding: 40px 25px; text-align: center; }
+        .data-header { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 25px; }
+        
+        .data-row { display: flex; justify-content: space-between; padding: 18px 5px; border-bottom: 1px solid #e1e1e4; font-size: 15px; }
+        .data-row .label { color: var(--text-sub); }
+        .data-row .val-before { color: var(--error-red); font-weight: 700; }
+        .data-row .val-after { color: var(--accent-gold); font-weight: 800; font-size: 16px; }
+        .total-save { background: var(--accent-gold); color: #fff; padding: 20px; border-radius: 16px; font-weight: 800; font-size: 19px; margin-top: 25px; }
+        .years-tag { font-size: 14px; color: var(--accent-gold); font-weight: 700; margin-top: 15px; display: block; }
+
+        /* 🔍 핵심 질문 섹션 */
+        .question { padding: 80px 25px; background: var(--bg-light); }
+        .q-box { border-left: 4px solid var(--accent-gold); padding-left: 25px; }
+        .q-box h3 { font-size: 22px; color: var(--text-main); margin: 0 0 20px 0; }
+        .q-box p { font-size: 15px; color: var(--text-sub); line-height: 1.8; margin: 0; }
+
+        /* 💡 솔루션/🛡️ 신뢰 구축 섹션 (Grouped) */
+        .strategy { padding: 80px 25px; background: var(--bg-white); }
+        .strat-header { text-align: left; margin-bottom: 50px; }
+        .strat-grid { display: grid; gap: 40px; }
+        .strat-item { position: relative; padding-left: 30px; }
+        .strat-item::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--accent-gold); font-weight: bold; font-size: 18px; }
+        .strat-item h4 { font-size: 18px; margin: 0 0 10px 0; font-weight: 700; color: var(--text-main); }
+        .strat-item p { font-size: 14px; color: #555; margin: 0; }
+
+        /* 👨‍👧 자산 승계 섹션 (Layer Diagram) */
+        .succession { padding: 80px 25px; background: var(--bg-light); text-align: center; }
+        .layer-diagram { margin-top: 40px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .layer-box { width: 100%; max-width: 350px; background: #fff; border: 1px solid var(--accent-gold); border-radius: 12px; padding: 15px; font-size: 13px; font-weight: 600; color: var(--text-main); position: relative; }
+        .layer-box::after { content: '↓'; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); color: var(--accent-gold); font-weight: bold; font-size: 18px; }
+        .layer-box:last-child::after { content: none; }
+        .layer-box small { color: var(--accent-gold); display: block; margin-bottom: 3px; }
+
+        /* 📋 폼 섹션 (Premium Figma UI) */
+        .form-container { padding: 100px 25px; background: var(--bg-white); border-top: 1px solid var(--border); }
+        .form-card { border: 1px solid var(--border); border-radius: 30px; padding: 50px 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.05); }
+        .form-header h2 { text-align: center; font-size: 24px; font-weight: 800; margin: 0 0 10px 0; }
+        .form-header p { text-align: center; font-size: 14px; color: var(--text-sub); margin: 0 0 40px 0; }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; padding-left: 5px; }
+        .form-group input { 
+            width: 100%; padding: 18px; border: 1px solid var(--border); border-radius: 14px; font-size: 16px; 
+            background: #fbfbfd; transition: all 0.2s ease; outline: none;
+        }
+        .form-group input:focus { border-color: var(--accent-gold); background: #fff; box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.08); }
+        
+        .submit-btn { 
+            width: 100%; padding: 22px; background: var(--accent-gold); color: #fff; border: none; 
+            border-radius: 16px; font-size: 18px; font-weight: 800; cursor: pointer; 
+            transition: 0.3s; margin-top: 20px;
+        }
+        .submit-btn:hover { background: var(--accent-gold-hover); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(197, 160, 89, 0.2); }
+        
+        .safe-note { text-align: center; font-size: 12px; color: #999; margin-top: 30px; line-height: 1.7; }
+        footer { padding: 60px 20px; text-align: center; font-size: 11px; color: #b0b0b8; border-top: 1px solid #f0f0f0; background: var(--bg-white); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <section class="hero">
+        <span class="hero-tag">PREMIUM CONSULTING FOR DOCTORS</span>
+        <h1>원장님, 수익의 절반 가까이가<br><span>세금으로 사라지고 있습니다</span></h1>
+        <p>연 순수익 10억 원, 실제 납부 세액 4억 원.<br>강남 대형 병원들은 이미 이 구조를 바꿨습니다.<br><b>불법이 아닙니다. 구조의 차이일 뿐입니다.</b></p>
+    </section>
+
+    <section class="pain-section">
+        <div class="section-header">
+            <h2>"혹시 지금 이런 상황이신가요?"</h2>
+            <p>단 하나라도 해당된다면, 원장님의 자산은 새어나가고 있습니다.</p>
+        </div>
+        
+        <div class="pain-list">
+            <div class="pain-item"><span class="bullet">😣</span><p>매출은 느는데, 내 통장 잔고는 왜 그대로일까?</p></div>
+            <div class="pain-item"><span class="bullet">😣</span><p>페이닥터 네트(NET) 계약으로 세금을 병원이 대납하고 있다.</p></div>
+            <div class="pain-item"><span class="bullet">😣</span><p>어설픈 MSO는 세무조사 걸릴까 두려워 시작하지 못했다.</p></div>
+            <div class="pain-item"><span class="bullet">😣</span><p>자녀에게 자산을 넘기고 싶은데 증여세가 무서워 엄두가 안 난다.</p></div>
+        </div>
+    </section>
+
+    <section class="data-section">
+        <div class="numbers-card">
+            <div class="data-header">연 순수익 10억 원 원장님 세금 시뮬레이션</div>
+            <div class="data-row">
+                <span class="label">과세표준(9억 8천만 기준) 납부 세액</span>
+                <span class="val-before">4억 700만 원</span>
+            </div>
+            <div class="data-row">
+                <span class="label">USP 절세 구조 적용 후</span>
+                <span class="val-after">1억 6,000만 원</span>
+            </div>
+            <div class="total-save">연간 절세액: 약 2억 4,700만 원</div>
+            <span class="years-tag">5년 누적 약 12억 3,500만 원의 자산 증대 효과</span>
+        </div>
+    </section>
+
+    <section class="question">
+        <div class="q-box">
+            <h3>"규모가 비슷한데, 왜 저 병원은 세금을 덜 낼까요?"</h3>
+            <p>네트워크 병원들은 MSO 구조를 통해 마케팅, 임대료, 자문료 등의 비용을 <br>별도 법인으로 합법적으로 이전합니다.<br>개인사업자의 최고세율(49.5%)이 아닌, **법인세 9~19%**라는 낮은 세율에서 <br>자산을 불리는 이것이 자산 격차의 핵심입니다.</p>
+        </div>
+    </section>
+
+    <section class="strategy">
+        <div class="strat-header">
+            <h2 style="font-size:24px; color:var(--text-main);">세무조사를 방어하는 확실한 마스터플랜</h2>
+        </div>
+        <div class="strat-grid">
+            <div class="strat-item">
+                <h4>시장에서 인정되는 적정 수수료</h4>
+                <p>제3자 견적 비교 및 SLA 계약을 상세히 문서화하여 국세청의 부당행위계산 부인을 차단합니다.</p>
+            </div>
+            <div class="strat-item">
+                <h4>실체성 있는 MSO 법인 구축</h4>
+                <p>독립 사무 공간, 전담 직원, 표준 연구노트 작성을 통해 페이퍼 컴퍼니 리스크를 원천 제거합니다.</p>
+            </div>
+            <div class="strat-item">
+                <h4>기업부설연구소 & IP 자산화</h4>
+                <p>병원 운영 알고리즘, 환자관리 시스템을 특허로 등록하여 '기술 라이선스료'를 합법화합니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="succession">
+        <h2 style="font-size:22px;">증여세 없이 100억 자산을 이전하는 4-Layer 구조</h2>
+        <div class="layer-diagram">
+            <div class="layer-box"><small>Layer 1</small>병원 (진료 수익 창출)</div>
+            <div class="layer-box"><small>Layer 2</small>MSO 법인 (벤처 인증 / R&D)</div>
+            <div class="layer-box"><small>Layer 3</small>자녀 지주법인 (배당 수취)</div>
+            <div class="layer-box"><small>Layer 4</small>안전한 실물 자산 취득</div>
+        </div>
+        <p style="font-size:13px; color:#666; margin-top:35px; word-break:keep-all;">이 구조에서는 수익이 '투자 이익'으로 분류되어 최고 50%의 증여세 과세 근거가 사라집니다. <br>자녀가 미성년자여도 가능합니다.</p>
+    </section>
+
+    <section class="pain-section" style="background:#fff;">
+        <h2 style="font-size:22px; text-align:center;">인건비 원가 절감 솔루션</h2>
+        <ul class="pain-list">
+            <li class="pain-item"><span class="bullet">1</span><p>페이닥터 그로스 계약 전환 (닥터 1인당 연 1,500만 원 절감)</p></li>
+            <li class="pain-item"><span class="bullet">2</span><p>사내근로복지기금 도입 (원장님 경비 인정 + 닥터 세금 면제)</p></li>
+            <li class="pain-item"><span class="bullet">3</span><p>GPO 공동구매 (소모품 단가 10~20% 구조적 인하)</p></li>
+        </ul>
+    </section>
+
+    <section class="form-container" id="apply">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>무료 절세 진단 신청</h2>
+                <p>통상 300만 원 상당의 경영 진단 시뮬레이션 보고서를<br>월 선착순 5팀 원장님께 무료로 제공합니다.</p>
+            </div>
+            <form id="dbForm">
+                <div class="form-group">
+                    <label>원장님 성함</label>
+                    <input type="text" id="name" required placeholder="성함을 입력해 주세요">
+                </div>
+                <div class="form-group">
+                    <label>휴대폰 번호</label>
+                    <input type="tel" id="phone" required placeholder="010-0000-0000">
+                </div>
+                <div class="form-group">
+                    <label>병의원 명 / 진료과목</label>
+                    <input type="text" id="clinic" required placeholder="예: USP안과">
+                </div>
+                <div class="form-group">
+                    <label>병원 주소 (지역)</label>
+                    <input type="text" id="address" required placeholder="예: 서울 강남구">
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">300만 원 상당 절세 진단 신청하기</button>
+            </form>
+            <div class="safe-note">
+                🔒 신청 후 최적의 절세 방향을 진단해드립니다.<br>
+                실제 숫자를 먼저 확인하신 후 천천히 결정하십시오.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>USP COMPANY | airfn38@uspcompany.co.kr | www.uspcompany.co.kr</p>
+        <p>오래오래 성장하고 안정을 누릴 수 있는 대한민국 1% 병원의 파트너</p>
+        <p>© 2026 USP COMPANY. All Rights Reserved.</p>
+    </footer>
+</div>
+
+<script>
+document.getElementById('dbForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "진단 전송 중...";
+
+    const data = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        clinic: document.getElementById('clinic').value,
+        address: document.getElementById('address').value
+    };
+
+    // 구글 앱스 스크립트 웹 앱 URL을 여기에 입력하세요
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwwMgPfIyB4UAIeRMRLlCugPIL-ro89ERldPDDCwg381OmAQAmqDQ5KqKusKQjmg4YLJA/exec";
+
+    fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+    })
+    .then(res => { 
+        // 성공 시 다운로드 페이지(success.html)로 이동
+        location.href = "success.html"; 
+    })
+    .catch(err => {
+        alert("일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        btn.disabled = false;
+        btn.innerText = "300만 원 상당 절세 진단 신청하기";
+    });
+});
+</script>
+
+</body>
+</html>
