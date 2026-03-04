@@ -7,127 +7,805 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --primary: #1a2a44; --accent: #c5a059; --bg: #f5f5f7;
-            --white: #ffffff; --text-main: #1d1d1f; --text-sub: #86868b;
-            --yt-red: #FF0000; --blog-green: #03C75A; --kakao-yellow: #FEE500;
+            --bg-white: #ffffff;
+            --bg-light: #f5f5f7;
+            --bg-dark: #0a0a0f;
+            --accent-gold: #c5a059;
+            --accent-gold-hover: #b08e4a;
+            --text-main: #1d1d1f;
+            --text-sub: #6e6e73;
+            --border: #e5e5e7;
+            --kakao-yellow: #FEE500;
+            --success-green: #34c759;
         }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; letter-spacing: -0.03em; }
-        body { font-family: 'Pretendard', sans-serif; margin: 0; background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; }
-        
-        .container { max-width: 550px; margin: 0 auto; padding: 20px; }
-        
-        /* 상단 성공 메시지 */
-        .success-header { padding: 60px 20px 40px; text-align: center; }
-        .success-header .icon { font-size: 50px; margin-bottom: 20px; }
-        .success-header h1 { font-size: 26px; font-weight: 800; color: var(--primary); margin: 0; }
-        .success-header p { font-size: 15px; color: var(--text-sub); margin-top: 15px; line-height: 1.6; }
-
-        /* 메인 다운로드 버튼 */
-        .download-section { margin-bottom: 40px; }
-        .dl-btn { 
-            display: block; width: 100%; padding: 24px; background: var(--primary); color: #fff; 
-            text-decoration: none; border-radius: 20px; font-weight: 800; font-size: 18px; 
-            text-align: center; box-shadow: 0 10px 30px rgba(26, 42, 68, 0.2); transition: 0.3s;
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; letter-spacing: -0.03em; margin: 0; padding: 0; }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
         }
-        .dl-btn:hover { transform: translateY(-3px); background: #000; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            box-shadow: 0 0 80px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
 
-        /* 섹션 타이틀 */
-        .section-title { font-size: 14px; font-weight: 700; color: var(--text-sub); margin: 30px 0 15px; padding-left: 5px; text-transform: uppercase; }
+        /* ——— 상단 성공 헤더 ——— */
+        .success-hero {
+            padding: 70px 30px 55px;
+            text-align: center;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .success-hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), #e8c97a, var(--accent-gold));
+        }
+        .check-circle {
+            width: 72px; height: 72px;
+            background: rgba(52,199,89,0.1);
+            border: 2px solid rgba(52,199,89,0.3);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 24px;
+        }
+        .success-hero h1 {
+            font-size: 26px; font-weight: 900;
+            color: var(--text-main); margin-bottom: 14px;
+        }
+        .success-hero p {
+            font-size: 15px; color: var(--text-sub);
+            line-height: 1.7; word-break: keep-all;
+        }
+        .success-hero p strong { color: var(--text-main); font-weight: 700; }
 
-        /* 링크 카드 그리드 */
+        /* 진행 타임라인 */
+        .timeline-wrap {
+            padding: 40px 25px;
+            background: var(--bg-light);
+        }
+        .timeline-title {
+            font-size: 13px; font-weight: 700;
+            color: var(--text-sub); text-transform: uppercase;
+            letter-spacing: 0.8px; margin-bottom: 20px;
+        }
+        .timeline {
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .tl-item {
+            display: flex; gap: 16px; position: relative;
+        }
+        .tl-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 17px; top: 36px;
+            width: 2px; height: calc(100% - 10px);
+            background: var(--border);
+        }
+        .tl-dot {
+            width: 36px; height: 36px;
+            border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900;
+            position: relative; z-index: 1;
+        }
+        .tl-dot.active {
+            background: var(--accent-gold); color: #fff;
+            box-shadow: 0 4px 12px rgba(197,160,89,0.3);
+        }
+        .tl-dot.pending {
+            background: var(--bg-white); color: var(--text-sub);
+            border: 2px solid var(--border);
+        }
+        .tl-content {
+            padding: 8px 0 28px;
+        }
+        .tl-content h4 {
+            font-size: 15px; font-weight: 800;
+            color: var(--text-main); margin-bottom: 4px;
+        }
+        .tl-content p {
+            font-size: 13px; color: var(--text-sub); line-height: 1.6;
+        }
+        .tl-content .tl-badge {
+            display: inline-block; margin-top: 6px;
+            padding: 4px 10px;
+            background: rgba(197,160,89,0.1);
+            border-radius: 6px;
+            font-size: 12px; font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        /* ——— 리포트 다운로드 ——— */
+        .download-section {
+            padding: 40px 25px;
+            background: var(--bg-white);
+            border-top: 1px solid var(--border);
+        }
+        .section-label {
+            font-size: 11px; font-weight: 700;
+            color: var(--accent-gold); letter-spacing: 1px;
+            text-transform: uppercase; margin-bottom: 16px;
+            display: block;
+        }
+        .dl-card {
+            background: var(--bg-dark);
+            border-radius: 22px;
+            padding: 30px 25px;
+            display: flex; align-items: center; gap: 18px;
+            text-decoration: none;
+            transition: all 0.25s;
+            position: relative; overflow: hidden;
+        }
+        .dl-card::before {
+            content: '';
+            position: absolute; top: -40px; right: -40px;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(197,160,89,0.2), transparent 70%);
+        }
+        .dl-card:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(0,0,0,0.15); }
+        .dl-icon {
+            width: 52px; height: 52px; flex-shrink: 0;
+            background: var(--accent-gold); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+        }
+        .dl-text { flex: 1; }
+        .dl-text span {
+            display: block; font-size: 17px; font-weight: 900;
+            color: #fff; margin-bottom: 4px;
+        }
+        .dl-text small {
+            font-size: 12px; color: rgba(255,255,255,0.5);
+        }
+        .dl-arrow {
+            color: var(--accent-gold); font-size: 20px; font-weight: 900; flex-shrink: 0;
+        }
+        .dl-note {
+            font-size: 12px; color: var(--text-sub);
+            text-align: center; margin-top: 12px; line-height: 1.6;
+        }
+
+        /* ——— 링크 섹션 공통 ——— */
+        .links-section {
+            padding: 35px 25px;
+            border-top: 1px solid var(--border);
+        }
+        .links-section.bg-light { background: var(--bg-light); }
+        .links-section.bg-white { background: var(--bg-white); }
+
         .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 400px) { .link-grid { grid-template-columns: 1fr; } }
 
-        .link-card { 
-            background: var(--white); border: 1px solid #e5e5e7; border-radius: 18px; 
-            padding: 20px; text-decoration: none; display: flex; flex-direction: column; 
-            align-items: center; text-align: center; transition: 0.2s;
+        .link-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 18px; padding: 22px 16px;
+            text-decoration: none;
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            transition: all 0.2s;
         }
-        .link-card:hover { border-color: var(--accent); background: #fffdf9; transform: translateY(-2px); }
-        .link-card img { width: 36px; height: 36px; margin-bottom: 12px; border-radius: 8px; }
-        .link-card span { font-size: 14px; font-weight: 700; color: var(--primary); }
-        .link-card small { font-size: 11px; color: var(--text-sub); margin-top: 4px; }
-
-        /* 하단 카톡 전용 (와이드) */
-        .kakao-section { margin-top: 12px; }
-        .kakao-card { 
-            background: var(--kakao-yellow); border: none; flex-direction: row; 
-            padding: 18px 25px; justify-content: flex-start; margin-bottom: 10px;
+        .link-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
         }
-        .kakao-card img { margin-bottom: 0; margin-right: 15px; }
-        .kakao-card .text-group { text-align: left; }
-        .kakao-card span { color: #3c1e1e; font-size: 15px; }
+        .link-card-icon-wrap {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 12px; font-size: 22px;
+        }
+        .link-card .lc-name {
+            font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 3px;
+        }
+        .link-card .lc-sub {
+            font-size: 11px; color: var(--text-sub);
+        }
 
-        footer { text-align: center; padding: 40px 20px; font-size: 11px; color: #b0b0b8; }
+        /* 카카오 카드 (와이드) */
+        .kakao-card {
+            background: var(--kakao-yellow);
+            border: none;
+            border-radius: 18px; padding: 20px 22px;
+            text-decoration: none;
+            display: flex; align-items: center; gap: 16px;
+            transition: all 0.2s; margin-bottom: 10px;
+        }
+        .kakao-card:last-child { margin-bottom: 0; }
+        .kakao-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(254,229,0,0.35); }
+        .kakao-icon-wrap {
+            width: 46px; height: 46px; border-radius: 13px;
+            background: rgba(60,30,30,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .kakao-card .kc-text { flex: 1; }
+        .kakao-card .kc-name {
+            font-size: 15px; font-weight: 800; color: #3c1e1e; display: block; margin-bottom: 2px;
+        }
+        .kakao-card .kc-sub {
+            font-size: 12px; color: rgba(60,30,30,0.6);
+        }
+        .kakao-card .kc-arrow {
+            font-size: 18px; color: rgba(60,30,30,0.4); flex-shrink: 0;
+        }
+
+        /* ——— 재방문 유도 배너 ——— */
+        .revisit-banner {
+            margin: 0 25px 35px;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 18px; padding: 22px;
+            display: flex; align-items: center; gap: 14px;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .revisit-banner:hover { border-color: var(--accent-gold); }
+        .revisit-banner .rb-icon { font-size: 28px; flex-shrink: 0; }
+        .revisit-banner .rb-text h4 { font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 3px; }
+        .revisit-banner .rb-text p { font-size: 12px; color: var(--text-sub); }
+        .revisit-banner .rb-arrow { font-size: 16px; color: var(--accent-gold); margin-left: auto; flex-shrink: 0; }
+
+        footer {
+            padding: 40px 20px 30px;
+            text-align: center;
+            font-size: 11px; color: #b0b0b8;
+            border-top: 1px solid var(--border);
+            background: var(--bg-white);
+            line-height: 2;
+        }
+        footer a { color: #999; text-decoration: none; }
+        footer a:hover { color: var(--accent-gold); }
+
+        /* ═══════════════════════════════════════
+           개인정보처리방침 모달
+        ═══════════════════════════════════════ */
+        .privacy-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .privacy-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .privacy-modal {
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            background: var(--bg-white);
+            border-radius: 28px 28px 0 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(60px);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 -20px 80px rgba(0,0,0,0.2);
+        }
+        .privacy-overlay.active .privacy-modal {
+            transform: translateY(0);
+        }
+        .privacy-modal-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            background: var(--bg-white);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .privacy-modal-header-left { display: flex; flex-direction: column; gap: 2px; }
+        .privacy-modal-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .privacy-modal-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .privacy-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-sub);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .privacy-close-btn:hover {
+            background: rgba(197,160,89,0.12);
+            color: var(--accent-gold);
+        }
+        .privacy-modal-body {
+            overflow-y: auto;
+            padding: 30px 28px 50px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .privacy-modal-body::-webkit-scrollbar { width: 4px; }
+        .privacy-modal-body::-webkit-scrollbar-track { background: transparent; }
+        .privacy-modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .privacy-date {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 28px;
+            padding: 10px 16px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .privacy-section {
+            margin-bottom: 32px;
+        }
+        .privacy-section-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .privacy-section h3 {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .privacy-section p {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.9;
+            word-break: keep-all;
+            margin-bottom: 10px;
+        }
+        .privacy-section p:last-child { margin-bottom: 0; }
+        .privacy-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .privacy-table th {
+            background: var(--bg-light);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
+        }
+        .privacy-table td {
+            padding: 10px 14px;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+            line-height: 1.6;
+            vertical-align: top;
+        }
+        .privacy-table tr:last-child td { border-bottom: none; }
+        .privacy-table tr:nth-child(even) td { background: #fafafa; }
+        .privacy-highlight {
+            background: rgba(197,160,89,0.06);
+            border: 1px solid rgba(197,160,89,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .privacy-highlight p {
+            color: #5a4020 !important;
+            font-weight: 600;
+            margin-bottom: 0 !important;
+        }
+        .privacy-contact-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 12px;
+        }
+        .privacy-contact-box p {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 4px !important;
+            line-height: 1.7;
+        }
+        .privacy-contact-box .contact-name {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main) !important;
+            margin-bottom: 8px !important;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="success-header">
-        <div class="icon">✅</div>
+
+    <!-- 성공 헤더 -->
+    <div class="success-hero">
+        <div class="check-circle">✅</div>
         <h1>신청이 완료되었습니다</h1>
-        <p>원장님의 자산을 지키는 첫 걸음,<br><b>'2026 병의원 절세 시크릿 리포트'</b>를 확인하세요.</p>
+        <p>원장님의 자산을 지키는 첫 걸음을 내딛으셨습니다.<br>
+        <strong>영업일 기준 24시간 이내</strong>에 담당 컨설턴트가 직접 연락드립니다.</p>
     </div>
 
+    <!-- 진행 타임라인 -->
+    <div class="timeline-wrap">
+        <div class="timeline-title">📋 신청 후 진행 프로세스</div>
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-dot active">✓</div>
+                <div class="tl-content">
+                    <h4>신청 완료</h4>
+                    <p>원장님의 정보가 정상적으로 접수되었습니다.</p>
+                    <span class="tl-badge">완료</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot pending">2</div>
+                <div class="tl-content">
+                    <h4>24시간 내 담당 컨설턴트 직접 연락</h4>
+                    <p>카카오톡 또는 전화 중 편하신 방법으로 상담 일정을 잡아드립니다.</p>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot pending">3</div>
+                <div class="tl-content">
+                    <h4>30분 화상 / 전화 초기 진단</h4>
+                    <p>현재 세금 구조를 분석하고 절세 가능 금액을 산출합니다.</p>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot pending">4</div>
+                <div class="tl-content">
+                    <h4>맞춤 절세 시뮬레이션 보고서 전달</h4>
+                    <p>통상 300만 원 상당의 경영 진단 보고서를 무료 제공합니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 리포트 다운로드 -->
     <div class="download-section">
-        <a href="usp_report.pdf" class="dl-btn" download>리포트 PDF 다운로드 ↓</a>
-        <p style="text-align: center; font-size: 12px; color: #999; margin-top: 12px;">※ 다운로드가 되지 않을 경우 카톡으로 문의주세요.</p>
-    </div>
-
-    <hr style="border: 0; border-top: 1px solid #e5e5e7; margin: 40px 0;">
-
-    <div class="section-title">Visual Insight (YouTube)</div>
-    <div class="link-grid">
-        <a href="https://www.youtube.com/@LNK1472" target="_blank" class="link-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="Youtube">
-            <span>절세가인</span>
-            <small>유튜브 채널</small>
-        </a>
-        <a href="https://www.youtube.com/@USPCOMPANY_1" target="_blank" class="link-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="Youtube">
-            <span>유에스피</span>
-            <small>유튜브 채널</small>
-        </a>
-    </div>
-
-    <div class="section-title">Deep Column (Naver Blog)</div>
-    <div class="link-grid">
-        <a href="https://blog.naver.com/kosan0811" target="_blank" class="link-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/4406/4406214.png" alt="Blog">
-            <span>코스메스</span>
-            <small>네이버 블로그</small>
-        </a>
-        <a href="https://blog.naver.com/airfn38" target="_blank" class="link-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/4406/4406214.png" alt="Blog">
-            <span>유에스피</span>
-            <small>네이버 블로그</small>
-        </a>
-    </div>
-
-    <div class="section-title">Direct Contact (Kakao)</div>
-    <div class="kakao-section">
-        <a href="http://pf.kakao.com/_SxdxfxcG" target="_blank" class="link-card kakao-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/3669/3669973.png" alt="Kakao">
-            <div class="text-group">
-                <span>유에스피 카톡 채널</span>
-                <small>병의원 전문 컨설팅 문의</small>
+        <span class="section-label">FREE REPORT</span>
+        <a href="usp_report.pdf" class="dl-card" download>
+            <div class="dl-icon">📄</div>
+            <div class="dl-text">
+                <span>2026 병의원 절세 시크릿 리포트</span>
+                <small>지금 바로 PDF 다운로드 가능합니다</small>
             </div>
+            <div class="dl-arrow">↓</div>
         </a>
-        <a href="http://pf.kakao.com/_xoxnxoxeG" target="_blank" class="link-card kakao-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/3669/3669973.png" alt="Kakao">
-            <div class="text-group">
-                <span>코스메스 카톡 채널</span>
-                <small>비공개 1:1 상담 신청</small>
+        <p class="dl-note">다운로드가 되지 않을 경우 아래 카카오 채널로 문의주세요.</p>
+    </div>
+
+    <!-- 유튜브 채널 -->
+    <div class="links-section bg-light">
+        <span class="section-label">▶ Visual Insight — YouTube</span>
+        <div class="link-grid">
+            <a href="https://www.youtube.com/@LNK1472" target="_blank" class="link-card">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="44" height="44" style="margin-bottom:12px;display:block;">
+                    <rect width="48" height="48" rx="12" fill="#FF0000"/>
+                    <path d="M38.5 16.5s-.4-2.6-1.5-3.7c-1.4-1.5-3-.5-3.7-.1C30.5 14 24 14 24 14s-6.5 0-9.3 1.7c-.7.4-2.3-.4-3.7.1-1.1 1.1-1.5 3.7-1.5 3.7S9 19.3 9 22.1v2.6c0 2.8.5 5.6.5 5.6s.4 2.6 1.5 3.7c1.4 1.5 3.3 1.4 4.1 1.6C17.5 36 24 36 24 36s6.5 0 9.3-1.7c.7-.4 2.3.4 3.7-.1 1.1-1.1 1.5-3.7 1.5-3.7s.5-2.8.5-5.6v-2.6c0-2.8-.5-5.6-.5-5.6z" fill="#FF0000"/>
+                    <path d="M20 29.5v-11l10 5.5-10 5.5z" fill="#fff"/>
+                </svg>
+                <div class="lc-name">절세가인</div>
+                <div class="lc-sub">유튜브 채널</div>
+            </a>
+            <a href="https://www.youtube.com/@USPCOMPANY_1" target="_blank" class="link-card">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="44" height="44" style="margin-bottom:12px;display:block;">
+                    <rect width="48" height="48" rx="12" fill="#FF0000"/>
+                    <path d="M38.5 16.5s-.4-2.6-1.5-3.7c-1.4-1.5-3-.5-3.7-.1C30.5 14 24 14 24 14s-6.5 0-9.3 1.7c-.7.4-2.3-.4-3.7.1-1.1 1.1-1.5 3.7-1.5 3.7S9 19.3 9 22.1v2.6c0 2.8.5 5.6.5 5.6s.4 2.6 1.5 3.7c1.4 1.5 3.3 1.4 4.1 1.6C17.5 36 24 36 24 36s6.5 0 9.3-1.7c.7-.4 2.3.4 3.7-.1 1.1-1.1 1.5-3.7 1.5-3.7s.5-2.8.5-5.6v-2.6c0-2.8-.5-5.6-.5-5.6z" fill="#FF0000"/>
+                    <path d="M20 29.5v-11l10 5.5-10 5.5z" fill="#fff"/>
+                </svg>
+                <div class="lc-name">유에스피</div>
+                <div class="lc-sub">유튜브 채널</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 네이버 블로그 -->
+    <div class="links-section bg-white">
+        <span class="section-label">✏️ Deep Column — Naver Blog</span>
+        <div class="link-grid">
+            <a href="https://blog.naver.com/kosan0811" target="_blank" class="link-card">
+                <div class="link-card-icon-wrap" style="background:rgba(3,199,90,0.08); color:#03C75A; font-size:18px; font-weight:900;">N</div>
+                <div class="lc-name">코스메스</div>
+                <div class="lc-sub">네이버 블로그</div>
+            </a>
+            <a href="https://blog.naver.com/airfn38" target="_blank" class="link-card">
+                <div class="link-card-icon-wrap" style="background:rgba(3,199,90,0.08); color:#03C75A; font-size:18px; font-weight:900;">N</div>
+                <div class="lc-name">유에스피</div>
+                <div class="lc-sub">네이버 블로그</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 카카오 채널 -->
+    <div class="links-section bg-light">
+        <span class="section-label">💬 Direct Contact — Kakao</span>
+        <a href="http://pf.kakao.com/_SxdxfxcG" target="_blank" class="kakao-card">
+            <div class="kakao-icon-wrap">💬</div>
+            <div class="kc-text">
+                <span class="kc-name">유에스피 카톡 채널</span>
+                <span class="kc-sub">병의원 전문 컨설팅 문의</span>
             </div>
+            <span class="kc-arrow">→</span>
+        </a>
+        <a href="http://pf.kakao.com/_xoxnxoxeG" target="_blank" class="kakao-card">
+            <div class="kakao-icon-wrap">💬</div>
+            <div class="kc-text">
+                <span class="kc-name">코스메스 카톡 채널</span>
+                <span class="kc-sub">비공개 1:1 상담 신청</span>
+            </div>
+            <span class="kc-arrow">→</span>
         </a>
     </div>
 
     <footer>
-        USP COMPANY | 010-2289-4931<br>
-        © 2026 USP COMPANY. All Rights Reserved.
+        <p><strong>USP COMPANY</strong></p>
+        <p>010-2289-4931 &nbsp;|&nbsp; airfn38@uspcompany.co.kr</p>
+        <p><a href="http://www.uspcompany.co.kr" target="_blank">www.uspcompany.co.kr</a></p>
+        <p style="margin-top:10px;">
+            <!-- 개인정보처리방침 링크: 모달 트리거 -->
+            <a href="#" onclick="openPrivacyModal(event)">개인정보처리방침</a>
+        </p>
+        <p>© 2026 USP COMPANY. All Rights Reserved.</p>
     </footer>
+
 </div>
 
+<!-- ═══════════════════════════════════════════════
+     개인정보처리방침 모달
+═══════════════════════════════════════════════ -->
+<div class="privacy-overlay" id="privacyOverlay" onclick="handleOverlayClick(event)">
+    <div class="privacy-modal" id="privacyModal">
+        <div class="privacy-modal-header">
+            <div class="privacy-modal-header-left">
+                <span class="privacy-modal-tag">LEGAL</span>
+                <span class="privacy-modal-title">개인정보처리방침</span>
+            </div>
+            <button class="privacy-close-btn" onclick="closePrivacyModal()">✕</button>
+        </div>
+        <div class="privacy-modal-body">
+            <span class="privacy-date">📅 시행일: 2026년 1월 1일 · 최종 개정: 2026년 3월 1일</span>
+
+            <div class="privacy-highlight">
+                <p>USP COMPANY(이하 "회사")는 정보주체의 자유와 권리 보호를 위해 「개인정보 보호법」 및 관계 법령을 준수하며, 이용자의 개인정보를 안전하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.</p>
+            </div>
+
+            <!-- 제1조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 01</div>
+                <h3>개인정보의 처리 목적</h3>
+                <p>회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>처리 목적</th>
+                        <th>상세 내용</th>
+                    </tr>
+                    <tr>
+                        <td>서비스 제공 및 상담</td>
+                        <td>무료 절세 진단 상담 신청 접수, 맞춤형 컨설팅 서비스 제공, 상담 일정 조율 및 결과 전달</td>
+                    </tr>
+                    <tr>
+                        <td>고객 관리</td>
+                        <td>고객 식별 및 본인 확인, 고객 문의 응대, 서비스 개선 및 만족도 조사</td>
+                    </tr>
+                    <tr>
+                        <td>마케팅 및 홍보</td>
+                        <td>신규 서비스 및 이벤트 안내 (별도 동의 시에 한함)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제2조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 02</div>
+                <h3>처리하는 개인정보 항목</h3>
+                <p>회사는 다음의 개인정보 항목을 처리하고 있습니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>구분</th>
+                        <th>수집 항목</th>
+                        <th>수집 방법</th>
+                    </tr>
+                    <tr>
+                        <td><strong>필수 항목</strong></td>
+                        <td>성함, 휴대폰 번호, 진료과목, 월 매출 구간, 병원 소재지(지역)</td>
+                        <td>홈페이지 상담 신청 폼</td>
+                    </tr>
+                    <tr>
+                        <td><strong>선택 항목</strong></td>
+                        <td>주요 고민 사항 (소득세 절감, MSO 구조 설계, 자녀 자산 이전, 인건비 절감)</td>
+                        <td>홈페이지 상담 신청 폼</td>
+                    </tr>
+                    <tr>
+                        <td><strong>자동 수집</strong></td>
+                        <td>접속 IP, 쿠키, 방문 일시, 서비스 이용 기록</td>
+                        <td>시스템 자동 수집</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제3조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 03</div>
+                <h3>개인정보의 처리 및 보유 기간</h3>
+                <p>회사는 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>보유 항목</th>
+                        <th>보유 기간</th>
+                        <th>근거</th>
+                    </tr>
+                    <tr>
+                        <td>상담 신청 정보</td>
+                        <td>수집일로부터 3년</td>
+                        <td>서비스 제공 및 분쟁 처리</td>
+                    </tr>
+                    <tr>
+                        <td>계약·청약 철회 기록</td>
+                        <td>5년</td>
+                        <td>전자상거래 등에서의 소비자 보호에 관한 법률</td>
+                    </tr>
+                    <tr>
+                        <td>소비자 불만·분쟁 처리 기록</td>
+                        <td>3년</td>
+                        <td>전자상거래 등에서의 소비자 보호에 관한 법률</td>
+                    </tr>
+                    <tr>
+                        <td>접속 로그</td>
+                        <td>3개월</td>
+                        <td>통신비밀보호법</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제4조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 04</div>
+                <h3>개인정보의 제3자 제공</h3>
+                <p>회사는 정보주체의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.</p>
+                <p>① 정보주체가 사전에 동의한 경우<br>② 법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</p>
+                <p>서비스 제공을 위해 아래와 같이 개인정보를 위탁하고 있습니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>수탁 업체</th>
+                        <th>위탁 업무</th>
+                        <th>보유 기간</th>
+                    </tr>
+                    <tr>
+                        <td>Google LLC</td>
+                        <td>상담 신청 데이터 수집·저장 (Google Apps Script)</td>
+                        <td>위탁 계약 종료 시까지</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제5조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 05</div>
+                <h3>정보주체의 권리·의무 및 행사 방법</h3>
+                <p>정보주체는 회사에 대해 언제든지 다음 각 호의 개인정보 보호 관련 권리를 행사할 수 있습니다.</p>
+                <p>① <strong>개인정보 열람 요구</strong><br>② <strong>오류 등이 있을 경우 정정 요구</strong><br>③ <strong>삭제 요구</strong><br>④ <strong>처리 정지 요구</strong></p>
+                <p>권리 행사는 「개인정보 보호법」 시행령 제41조제1항에 따라 서면, 전자우편, 모사전송(FAX) 등을 통하여 하실 수 있으며, 회사는 이에 대해 지체 없이 조치하겠습니다.</p>
+            </div>
+
+            <!-- 제6조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 06</div>
+                <h3>개인정보의 안전성 확보 조치</h3>
+                <p>회사는 「개인정보 보호법」 제29조에 따라 다음과 같이 안전성 확보에 필요한 기술적·관리적·물리적 조치를 하고 있습니다.</p>
+                <p>① <strong>내부관리계획 수립·시행</strong> : 개인정보의 안전한 처리를 위하여 내부관리계획을 수립하고 시행하고 있습니다.<br>② <strong>접속기록의 보관 및 위변조 방지</strong> : 개인정보처리시스템에 접속한 기록을 최소 1년 이상 보관·관리하고 있습니다.<br>③ <strong>개인정보에 대한 접근 제한</strong> : 개인정보를 처리하는 데이터베이스시스템에 대한 접근권한의 부여·변경·말소를 통하여 개인정보에 대한 접근통제를 위하여 필요한 조치를 하고 있습니다.<br>④ <strong>비인가자에 대한 출입 통제</strong> : 개인정보를 보관하고 있는 물리적 보관 장소를 별도로 두고 이에 대해 출입통제 절차를 수립·운영하고 있습니다.</p>
+            </div>
+
+            <!-- 제7조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 07</div>
+                <h3>개인정보 자동 수집 장치의 설치·운영 및 거부</h3>
+                <p>회사는 이용자에게 개별적인 맞춤서비스를 제공하기 위해 이용 정보를 저장하고 수시로 불러오는 '쿠키(cookie)'를 사용합니다.</p>
+                <p>쿠키는 웹사이트를 운영하는데 이용되는 서버(http)가 이용자의 컴퓨터 브라우저에게 보내는 소량의 정보이며 이용자들의 PC 컴퓨터내의 하드디스크에 저장되기도 합니다. 이용자는 쿠키 설치에 대한 선택권을 가지고 있습니다. 웹브라우저에서 옵션을 설정함으로써 모든 쿠키를 허용하거나, 쿠키가 저장될 때마다 확인을 거치거나, 아니면 모든 쿠키의 저장을 거부할 수 있습니다.</p>
+            </div>
+
+            <!-- 제8조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 08</div>
+                <h3>개인정보 보호책임자</h3>
+                <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 정보주체의 개인정보 관련 불만 처리 및 피해 구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+                <div class="privacy-contact-box">
+                    <p class="contact-name">🛡️ 개인정보 보호책임자</p>
+                    <p><strong>소속 / 직위:</strong> USP COMPANY / 팀장</p>
+                    <p><strong>연락처:</strong> 010-2289-4931</p>
+                    <p><strong>이메일:</strong> airfn38@uspcompany.co.kr</p>
+                    <p><strong>홈페이지:</strong> www.uspcompany.co.kr</p>
+                </div>
+                <p style="margin-top: 14px;">정보주체께서는 회사의 서비스를 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만 처리, 피해 구제 등에 관한 사항을 개인정보 보호책임자 및 담당부서로 문의하실 수 있습니다. 회사는 정보주체의 문의에 대해 지체 없이 답변 및 처리해드릴 것입니다.</p>
+            </div>
+
+            <!-- 제9조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 09</div>
+                <h3>개인정보 처리방침 변경</h3>
+                <p>① 이 개인정보처리방침은 2026년 1월 1일부터 적용됩니다.</p>
+                <p>② 이전의 개인정보처리방침은 아래에서 확인하실 수 있습니다. 본 처리방침에 변경이 있는 경우, 변경 사항을 웹사이트 공지사항을 통하여 공지합니다.</p>
+            </div>
+
+            <!-- 제10조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 10</div>
+                <h3>권익침해 구제 방법</h3>
+                <p>정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회, 한국인터넷진흥원 개인정보침해신고센터 등에 분쟁 해결이나 상담 등을 신청할 수 있습니다.</p>
+                <div class="privacy-contact-box">
+                    <p>📞 <strong>개인정보침해신고센터</strong> (한국인터넷진흥원): (국번없이) 118</p>
+                    <p>⚖️ <strong>개인정보분쟁조정위원회</strong>: (국번없이) 1833-6972</p>
+                    <p>🔍 <strong>대검찰청 사이버수사과</strong>: (국번없이) 1301</p>
+                    <p>👮 <strong>경찰청 사이버수사국</strong>: (국번없이) 182</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // ═══════════════════════════════════════
+    // 개인정보처리방침 모달 제어
+    // ═══════════════════════════════════════
+    function openPrivacyModal(e) {
+        if (e) e.preventDefault();
+        const overlay = document.getElementById('privacyOverlay');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        document.querySelector('.privacy-modal-body').scrollTop = 0;
+    }
+
+    function closePrivacyModal() {
+        const overlay = document.getElementById('privacyOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function handleOverlayClick(e) {
+        if (e.target === document.getElementById('privacyOverlay')) {
+            closePrivacyModal();
+        }
+    }
+
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePrivacyModal();
+    });
+</script>
 </body>
 </html>

@@ -3,192 +3,1194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USP PREMIUM | 고소득 병의원 절세 시뮬레이션</title>
+    <title>USP PREMIUM | 고소득 병의원 절세 구조 설계 전문</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
             --bg-white: #ffffff;
-            --bg-light: #f5f5f7; /* Apple Gray */
-            --accent-gold: #c5a059; /* Muted Premium Gold */
+            --bg-light: #f5f5f7;
+            --bg-dark: #0a0a0f;
+            --bg-dark2: #111118;
+            --accent-gold: #c5a059;
+            --accent-gold-light: #d4b070;
             --accent-gold-hover: #b08e4a;
-            --text-main: #1d1d1f; /* Near Black */
-            --text-sub: #6e6e73; /* Apple Sub Text */
+            --accent-gold-glow: rgba(197, 160, 89, 0.15);
+            --text-main: #1d1d1f;
+            --text-sub: #6e6e73;
             --error-red: #ff3b30;
+            --success-green: #34c759;
+            --kakao-yellow: #FEE500;
             --border: #e5e5e7;
+            --border-dark: rgba(255,255,255,0.08);
         }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; letter-spacing: -0.03em; }
-        body { font-family: 'Pretendard', sans-serif; margin: 0; background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; }
-        .container { max-width: 600px; margin: 0 auto; background: var(--bg-white); box-shadow: 0 0 50px rgba(0,0,0,0.03); overflow: hidden; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; letter-spacing: -0.03em; margin: 0; padding: 0; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--bg-white); overflow: hidden; box-shadow: 0 0 80px rgba(0,0,0,0.06); }
 
-        /* 🔴 히어로 섹션 (Apple Style Minimal) */
-        .hero { padding: 100px 30px 80px; text-align: center; background: var(--bg-white); }
-        .hero-tag { display: inline-block; padding: 6px 16px; border: 1px solid var(--accent-gold); border-radius: 50px; color: var(--accent-gold); font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
-        .hero h1 { font-size: 32px; line-height: 1.25; font-weight: 800; word-break: keep-all; margin: 0; }
-        .hero h1 span { color: var(--accent-gold); }
-        .hero p { font-size: 17px; color: var(--text-sub); margin-top: 30px; font-weight: 400; line-height: 1.7; }
+        /* ——— FLOATING ELEMENTS ——— */
+        .floating-kakao {
+            position: fixed; bottom: 28px; right: 20px; z-index: 999;
+            background: var(--kakao-yellow); color: #3C1E1E;
+            border-radius: 50px; padding: 14px 22px;
+            font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 8px 30px rgba(254,229,0,0.4);
+            cursor: pointer; text-decoration: none;
+            opacity: 0; transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .floating-kakao.visible { opacity: 1; transform: translateY(0); }
+        .floating-kakao:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(254,229,0,0.5); }
 
-        /* 😣 페인포인트 섹션 (White Card UI) */
+        .urgency-bar {
+            background: linear-gradient(90deg, #1a1a2e, #16213e);
+            color: #fff; text-align: center; padding: 12px 20px;
+            font-size: 13px; font-weight: 600; letter-spacing: 0;
+        }
+        .urgency-bar span { color: var(--error-red); font-weight: 800; }
+        .urgency-dot { display: inline-block; width: 7px; height: 7px; background: var(--error-red); border-radius: 50%; margin-right: 8px; animation: blink 1.2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* ——— HERO ——— */
+        .hero {
+            padding: 90px 30px 80px;
+            background: #ffffff;
+            text-align: center; position: relative; overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero-tag {
+            display: inline-block; padding: 7px 18px;
+            border: 1px solid rgba(197,160,89,0.45); border-radius: 50px;
+            color: var(--accent-gold); font-size: 12px; font-weight: 700;
+            letter-spacing: 0.5px; margin-bottom: 28px;
+            background: rgba(197,160,89,0.07);
+        }
+        .hero h1 {
+            font-size: 34px; line-height: 1.22; font-weight: 900;
+            word-break: keep-all; color: var(--text-main);
+        }
+        .hero h1 .gold { color: var(--accent-gold); }
+        .hero-sub {
+            font-size: 16px; color: var(--text-sub);
+            margin-top: 25px; line-height: 1.8; word-break: keep-all;
+        }
+        .hero-sub strong { color: var(--text-main); font-weight: 700; }
+
+        .trust-badges {
+            display: flex; justify-content: center; gap: 0;
+            margin-top: 40px; flex-wrap: wrap;
+        }
+        .trust-badge {
+            padding: 16px 20px; text-align: center; border-right: 1px solid var(--border);
+            flex: 1; min-width: 120px;
+        }
+        .trust-badge:last-child { border-right: none; }
+        .trust-badge .num { font-size: 22px; font-weight: 900; color: var(--accent-gold); display: block; }
+        .trust-badge .lbl { font-size: 11px; color: var(--text-sub); margin-top: 3px; display: block; line-height: 1.4; }
+        .trust-badges-wrap { background: var(--bg-light); border: 1px solid var(--border); border-radius: 18px; margin-top: 40px; overflow: hidden; }
+
+        .hero-cta-group { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; }
+        .btn-primary {
+            display: block; padding: 20px; background: var(--accent-gold);
+            color: #fff; border: none; border-radius: 14px;
+            font-size: 17px; font-weight: 900; cursor: pointer;
+            text-align: center; text-decoration: none;
+            transition: all 0.25s; letter-spacing: -0.02em;
+        }
+        .btn-primary:hover { background: var(--accent-gold-hover); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(197,160,89,0.3); }
+        .btn-kakao {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 18px; background: var(--kakao-yellow);
+            color: #3C1E1E; border: none; border-radius: 14px;
+            font-size: 16px; font-weight: 800; cursor: pointer;
+            text-decoration: none; transition: all 0.25s;
+        }
+        .btn-kakao:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(254,229,0,0.35); }
+
+        /* ——— PAIN ——— */
         .pain-section { padding: 80px 25px; background: var(--bg-light); }
-        .section-header { text-align: center; margin-bottom: 50px; }
-        .section-header h2 { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0 0 15px 0; }
-        .section-header p { font-size: 15px; color: var(--text-sub); margin: 0; }
-        
-        .pain-list { list-style: none; padding: 0; }
-        .pain-item { background: var(--bg-white); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 15px; display: flex; align-items: center; transition: 0.3s; }
-        .pain-item:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
-        .pain-item .bullet { color: var(--accent-gold); font-size: 22px; font-weight: bold; margin-right: 20px; }
-        .pain-item p { margin: 0; font-size: 15px; font-weight: 600; color: #424245; }
+        .section-header { text-align: center; margin-bottom: 45px; }
+        .section-header h2 { font-size: 26px; font-weight: 900; color: var(--text-main); margin-bottom: 12px; word-break: keep-all; }
+        .section-header p { font-size: 14px; color: var(--text-sub); word-break: keep-all; }
+        .section-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
 
-        /* 📊 현실 직시 섹션 (Clean Data Card) */
-        .data-section { padding: 80px 25px; background: var(--bg-white); }
-        .numbers-card { background: var(--bg-light); border: 1px solid var(--border); border-radius: 28px; padding: 40px 25px; text-align: center; }
-        .data-header { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 25px; }
-        
-        .data-row { display: flex; justify-content: space-between; padding: 18px 5px; border-bottom: 1px solid #e1e1e4; font-size: 15px; }
-        .data-row .label { color: var(--text-sub); }
-        .data-row .val-before { color: var(--error-red); font-weight: 700; }
-        .data-row .val-after { color: var(--accent-gold); font-weight: 800; font-size: 16px; }
-        .total-save { background: var(--accent-gold); color: #fff; padding: 20px; border-radius: 16px; font-weight: 800; font-size: 19px; margin-top: 25px; }
-        .years-tag { font-size: 14px; color: var(--accent-gold); font-weight: 700; margin-top: 15px; display: block; }
-
-        /* 🔍 핵심 질문 섹션 */
-        .question { padding: 80px 25px; background: var(--bg-light); }
-        .q-box { border-left: 4px solid var(--accent-gold); padding-left: 25px; }
-        .q-box h3 { font-size: 22px; color: var(--text-main); margin: 0 0 20px 0; }
-        .q-box p { font-size: 15px; color: var(--text-sub); line-height: 1.8; margin: 0; }
-
-        /* 💡 솔루션/🛡️ 신뢰 구축 섹션 (Grouped) */
-        .strategy { padding: 80px 25px; background: var(--bg-white); }
-        .strat-header { text-align: left; margin-bottom: 50px; }
-        .strat-grid { display: grid; gap: 40px; }
-        .strat-item { position: relative; padding-left: 30px; }
-        .strat-item::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--accent-gold); font-weight: bold; font-size: 18px; }
-        .strat-item h4 { font-size: 18px; margin: 0 0 10px 0; font-weight: 700; color: var(--text-main); }
-        .strat-item p { font-size: 14px; color: #555; margin: 0; }
-
-        /* 👨‍👧 자산 승계 섹션 (Layer Diagram) */
-        .succession { padding: 80px 25px; background: var(--bg-light); text-align: center; }
-        .layer-diagram { margin-top: 40px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-        .layer-box { width: 100%; max-width: 350px; background: #fff; border: 1px solid var(--accent-gold); border-radius: 12px; padding: 15px; font-size: 13px; font-weight: 600; color: var(--text-main); position: relative; }
-        .layer-box::after { content: '↓'; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); color: var(--accent-gold); font-weight: bold; font-size: 18px; }
-        .layer-box:last-child::after { content: none; }
-        .layer-box small { color: var(--accent-gold); display: block; margin-bottom: 3px; }
-
-        /* 📋 폼 섹션 (Premium Figma UI) */
-        .form-container { padding: 100px 25px; background: var(--bg-white); border-top: 1px solid var(--border); }
-        .form-card { border: 1px solid var(--border); border-radius: 30px; padding: 50px 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.05); }
-        .form-header h2 { text-align: center; font-size: 24px; font-weight: 800; margin: 0 0 10px 0; }
-        .form-header p { text-align: center; font-size: 14px; color: var(--text-sub); margin: 0 0 40px 0; }
-
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; padding-left: 5px; }
-        .form-group input { 
-            width: 100%; padding: 18px; border: 1px solid var(--border); border-radius: 14px; font-size: 16px; 
-            background: #fbfbfd; transition: all 0.2s ease; outline: none;
+        .pain-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .pain-item {
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: 18px; padding: 22px;
+            display: flex; align-items: flex-start; gap: 16px;
+            transition: all 0.25s; cursor: default;
         }
-        .form-group input:focus { border-color: var(--accent-gold); background: #fff; box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.08); }
-        
-        .submit-btn { 
-            width: 100%; padding: 22px; background: var(--accent-gold); color: #fff; border: none; 
-            border-radius: 16px; font-size: 18px; font-weight: 800; cursor: pointer; 
-            transition: 0.3s; margin-top: 20px;
+        .pain-item:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.04); border-color: rgba(197,160,89,0.3); }
+        .pain-emoji { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+        .pain-text h4 { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 5px; }
+        .pain-text p { font-size: 13px; color: var(--text-sub); line-height: 1.7; word-break: keep-all; }
+
+        /* ——— SIMULATOR ——— */
+        .simulator-section { padding: 80px 25px; background: var(--bg-white); }
+        .sim-card {
+            background: var(--bg-dark); border-radius: 28px; padding: 40px 28px;
+            position: relative; overflow: hidden;
         }
-        .submit-btn:hover { background: var(--accent-gold-hover); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(197, 160, 89, 0.2); }
-        
-        .safe-note { text-align: center; font-size: 12px; color: #999; margin-top: 30px; line-height: 1.7; }
-        footer { padding: 60px 20px; text-align: center; font-size: 11px; color: #b0b0b8; border-top: 1px solid #f0f0f0; background: var(--bg-white); }
+        .sim-card::before {
+            content:''; position: absolute; top: -60px; right: -60px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(197,160,89,0.15), transparent 70%);
+        }
+        .sim-title { color: #fff; font-size: 20px; font-weight: 900; margin-bottom: 8px; word-break: keep-all; }
+        .sim-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 35px; }
+
+        .slider-wrap { margin-bottom: 30px; }
+        .slider-label { color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+        .slider-value { color: var(--accent-gold); font-size: 28px; font-weight: 900; margin-bottom: 16px; }
+        .range-slider {
+            -webkit-appearance: none; width: 100%; height: 4px;
+            border-radius: 4px; outline: none;
+            background: linear-gradient(to right, var(--accent-gold) 50%, rgba(255,255,255,0.15) 50%);
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 22px; height: 22px;
+            border-radius: 50%; background: var(--accent-gold);
+            cursor: pointer; border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .slider-steps { display: flex; justify-content: space-between; margin-top: 8px; }
+        .slider-steps span { font-size: 10px; color: rgba(255,255,255,0.35); }
+
+        .sim-results { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .sim-row {
+            background: rgba(255,255,255,0.05); border-radius: 14px; padding: 18px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .sim-row .sr-label { font-size: 13px; color: rgba(255,255,255,0.55); }
+        .sim-row .sr-val { font-size: 18px; font-weight: 900; }
+        .sim-row .sr-val.red { color: #ff6b6b; }
+        .sim-row .sr-val.green { color: #4ade80; }
+        .sim-highlight {
+            background: var(--accent-gold); border-radius: 16px; padding: 22px;
+            text-align: center;
+        }
+        .sim-highlight .sh-label { font-size: 13px; color: rgba(0,0,0,0.6); font-weight: 700; margin-bottom: 5px; }
+        .sim-highlight .sh-val { font-size: 30px; font-weight: 900; color: #0a0a0f; }
+        .sim-highlight .sh-5y { font-size: 13px; color: rgba(0,0,0,0.6); margin-top: 6px; }
+        .sim-highlight .sh-5y strong { color: #0a0a0f; font-weight: 800; }
+        .sim-disclaimer { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 16px; line-height: 1.6; text-align: center; }
+        .sim-cta { margin-top: 24px; }
+
+        /* ——— STRUCTURE ——— */
+        .structure-section { padding: 80px 25px; background: var(--bg-light); }
+        .compare-cards { display: flex; gap: 12px; margin-bottom: 35px; }
+        .cmp-card {
+            flex: 1; border-radius: 18px; padding: 22px; text-align: center;
+        }
+        .cmp-card.bad { background: rgba(255,59,48,0.06); border: 1.5px solid rgba(255,59,48,0.2); }
+        .cmp-card.good { background: rgba(52,199,89,0.06); border: 1.5px solid rgba(52,199,89,0.2); }
+        .cmp-card .cmp-lbl { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .cmp-card.bad .cmp-lbl { color: var(--error-red); }
+        .cmp-card.good .cmp-lbl { color: var(--success-green); }
+        .cmp-card .cmp-num { font-size: 28px; font-weight: 900; }
+        .cmp-card.bad .cmp-num { color: var(--error-red); }
+        .cmp-card.good .cmp-num { color: var(--success-green); }
+        .cmp-card .cmp-desc { font-size: 11px; color: var(--text-sub); margin-top: 5px; line-height: 1.5; }
+        .cmp-arrow { display: flex; align-items: center; justify-content: center; padding-top: 20px; flex-shrink: 0; color: var(--accent-gold); font-size: 22px; font-weight: 900; }
+
+        .oneStop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 30px; }
+        .os-item {
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: 14px; padding: 18px 16px;
+        }
+        .os-item .os-icon { font-size: 22px; margin-bottom: 8px; }
+        .os-item h5 { font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+        .os-item p { font-size: 12px; color: var(--text-sub); }
+
+        .cost-list { list-style: none; margin-top: 25px; display: flex; flex-direction: column; gap: 8px; }
+        .cost-list li {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 16px;
+            font-size: 14px; font-weight: 600; color: var(--text-main);
+        }
+        .cost-list li::before { content: '✅'; font-size: 15px; flex-shrink: 0; }
+
+        /* ——— DEFENSE ——— */
+        .defense-section { padding: 80px 25px; background: var(--bg-dark); }
+        .defense-section .section-header h2 { color: #fff; }
+        .defense-section .section-header p { color: rgba(255,255,255,0.5); }
+        .zero-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(197,160,89,0.12); border: 1px solid rgba(197,160,89,0.3);
+            border-radius: 12px; padding: 12px 20px; margin-bottom: 40px;
+        }
+        .zero-badge .zb-icon { font-size: 24px; }
+        .zero-badge .zb-text { font-size: 14px; font-weight: 700; color: var(--accent-gold); line-height: 1.4; }
+
+        .defense-steps { display: flex; flex-direction: column; gap: 20px; }
+        .def-step {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px; padding: 28px;
+        }
+        .def-step-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+        .def-num { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; color: #0a0a0f; flex-shrink: 0; }
+        .def-step h4 { font-size: 16px; font-weight: 800; color: #fff; }
+        .def-step p { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+        .def-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
+        .def-badge {
+            background: rgba(197,160,89,0.1); border: 1px solid rgba(197,160,89,0.25);
+            border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700; color: var(--accent-gold);
+        }
+        .legal-note {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px; padding: 18px; margin-top: 28px;
+        }
+        .legal-note .ln-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+        .legal-note p { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.8; }
+
+        /* ——— 4-LAYER ——— */
+        .succession { padding: 80px 25px; background: var(--bg-white); text-align: center; }
+        .layer-diagram { margin-top: 40px; display: flex; flex-direction: column; gap: 0; align-items: center; }
+        .layer-box {
+            width: 100%; max-width: 400px;
+            background: var(--bg-light); border: 1.5px solid var(--border);
+            border-radius: 16px; padding: 20px 22px; text-align: left; position: relative;
+            transition: all 0.25s;
+        }
+        .layer-box:hover { border-color: var(--accent-gold); transform: scale(1.01); }
+        .layer-arrow { height: 28px; display: flex; align-items: center; justify-content: center; color: var(--accent-gold); font-size: 20px; font-weight: bold; }
+        .layer-num { font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px; margin-bottom: 4px; }
+        .layer-title { font-size: 16px; font-weight: 900; color: var(--text-main); margin-bottom: 4px; }
+        .layer-role { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; }
+        .layer-effect { font-size: 12px; color: var(--accent-gold); font-weight: 700; }
+        .succession-stats {
+            display: flex; gap: 10px; margin-top: 35px; flex-wrap: wrap;
+        }
+        .suc-stat {
+            flex: 1; min-width: 100px;
+            background: var(--bg-light); border: 1px solid var(--border);
+            border-radius: 14px; padding: 16px; text-align: center;
+        }
+        .suc-stat .ss-val { font-size: 17px; font-weight: 900; color: var(--accent-gold); }
+        .suc-stat .ss-lbl { font-size: 11px; color: var(--text-sub); margin-top: 3px; line-height: 1.4; }
+        .succession-note { font-size: 12px; color: var(--text-sub); margin-top: 25px; line-height: 1.8; word-break: keep-all; }
+
+        /* ——— HR SECTION ——— */
+        .hr-section { padding: 80px 25px; background: var(--bg-light); }
+        .hr-items { display: flex; flex-direction: column; gap: 12px; }
+        .hr-item {
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: 18px; padding: 24px;
+            display: flex; align-items: flex-start; gap: 16px;
+        }
+        .hr-num { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-light); border: 2px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: var(--accent-gold); flex-shrink: 0; }
+        .hr-item h4 { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 5px; }
+        .hr-item p { font-size: 13px; color: var(--text-sub); line-height: 1.7; }
+        .hr-item .hr-badge { display: inline-block; margin-top: 8px; padding: 4px 10px; background: rgba(197,160,89,0.1); border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--accent-gold); }
+
+        /* ——— SOCIAL PROOF ——— */
+        .social-section { padding: 80px 25px; background: var(--bg-white); }
+        .case-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 35px; }
+        .case-card {
+            background: var(--bg-light); border: 1px solid var(--border);
+            border-radius: 22px; padding: 28px;
+        }
+        .case-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+        .case-who { font-size: 13px; font-weight: 800; color: var(--text-main); }
+        .case-who span { color: var(--text-sub); font-weight: 500; }
+        .case-save { background: var(--accent-gold); color: #fff; padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 900; }
+        .case-nums { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .case-before { text-align: center; flex: 1; }
+        .case-before .cb-val { font-size: 20px; font-weight: 900; color: var(--error-red); }
+        .case-before .cb-lbl { font-size: 11px; color: var(--text-sub); }
+        .case-to { font-size: 20px; color: var(--text-sub); font-weight: 300; }
+        .case-after { text-align: center; flex: 1; }
+        .case-after .ca-val { font-size: 20px; font-weight: 900; color: var(--success-green); }
+        .case-after .ca-lbl { font-size: 11px; color: var(--text-sub); }
+        .case-quote { font-size: 14px; color: #424245; line-height: 1.8; font-style: italic; border-left: 3px solid var(--accent-gold); padding-left: 16px; word-break: keep-all; }
+        .case-attr { font-size: 12px; color: var(--text-sub); margin-top: 10px; font-style: normal; font-weight: 600; }
+
+        .reviews-scroll { display: flex; flex-direction: column; gap: 10px; }
+        .review-item {
+            background: var(--bg-light); border: 1px solid var(--border);
+            border-radius: 14px; padding: 18px 20px;
+        }
+        .review-item p { font-size: 14px; color: var(--text-main); font-weight: 600; line-height: 1.7; word-break: keep-all; }
+        .review-item .ri-attr { font-size: 12px; color: var(--text-sub); margin-top: 6px; }
+        .stars { color: var(--accent-gold); font-size: 13px; margin-bottom: 6px; }
+
+        /* ——— TEAM ——— */
+        .team-section { padding: 80px 25px; background: var(--bg-dark); }
+        .team-section .section-header h2 { color: #fff; }
+        .team-section .section-header p { color: rgba(255,255,255,0.5); }
+        .team-grid { display: flex; flex-direction: column; gap: 14px; }
+        .team-card {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px; padding: 24px;
+            display: flex; gap: 18px; align-items: flex-start;
+        }
+        .team-avatar {
+            width: 52px; height: 52px; border-radius: 14px;
+            background: rgba(197,160,89,0.15); border: 1.5px solid rgba(197,160,89,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .team-info { flex: 1; }
+        .team-pos { font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.5px; margin-bottom: 3px; }
+        .team-name { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+        .team-cred { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+        .team-benefit { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; font-style: italic; }
+
+        /* ——— FAQ ——— */
+        .faq-section { padding: 80px 25px; background: var(--bg-light); }
+        .faq-list { display: flex; flex-direction: column; gap: 8px; }
+        .faq-item { background: var(--bg-white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .faq-q {
+            padding: 20px 22px; display: flex; justify-content: space-between; align-items: flex-start;
+            cursor: pointer; font-size: 15px; font-weight: 700; color: var(--text-main);
+            gap: 12px; line-height: 1.5; word-break: keep-all;
+        }
+        .faq-q .faq-cat { font-size: 11px; font-weight: 700; color: var(--accent-gold); display: block; margin-bottom: 3px; }
+        .faq-q-text { flex: 1; }
+        .faq-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bg-light); display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform 0.3s; color: var(--text-sub); margin-top: 2px; }
+        .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--accent-gold); }
+        .faq-a {
+            padding: 0 22px; max-height: 0; overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
+            font-size: 14px; color: var(--text-sub); line-height: 1.8; word-break: keep-all;
+        }
+        .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+        /* ——— FORM ——— */
+        .form-container { padding: 80px 25px; background: var(--bg-white); }
+        .form-card { border: 1px solid var(--border); border-radius: 28px; padding: 40px 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.04); }
+        .form-badge { display: flex; justify-content: center; margin-bottom: 20px; }
+        .form-badge span {
+            background: rgba(255,59,48,0.06); border: 1px solid rgba(255,59,48,0.2);
+            border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 800; color: var(--error-red);
+        }
+        .form-header h2 { text-align: center; font-size: 22px; font-weight: 900; color: var(--text-main); margin-bottom: 8px; word-break: keep-all; }
+        .form-header p { text-align: center; font-size: 14px; color: var(--text-sub); margin-bottom: 30px; word-break: keep-all; line-height: 1.7; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; padding-left: 4px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 16px; border: 1.5px solid var(--border);
+            border-radius: 12px; font-size: 15px; font-family: 'Pretendard', sans-serif;
+            background: #fbfbfd; transition: all 0.2s; outline: none; color: var(--text-main);
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-gold); background: #fff; box-shadow: 0 0 0 4px rgba(197,160,89,0.08); }
+        .concern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .concern-item { display: flex; align-items: center; gap: 8px; background: var(--bg-light); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; cursor: pointer; transition: all 0.2s; }
+        .concern-item.selected { background: rgba(197,160,89,0.08); border-color: var(--accent-gold); }
+        .concern-item input[type=checkbox] { display: none; }
+        .concern-item label { font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; }
+        .concern-check { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+        .concern-item.selected .concern-check { background: var(--accent-gold); border-color: var(--accent-gold); }
+        .concern-item.selected .concern-check::after { content: '✓'; font-size: 11px; color: #fff; font-weight: 900; }
+        .submit-btn {
+            width: 100%; padding: 20px; background: var(--accent-gold);
+            color: #fff; border: none; border-radius: 14px;
+            font-size: 17px; font-weight: 900; cursor: pointer;
+            transition: all 0.3s; margin-top: 20px; letter-spacing: -0.02em;
+        }
+        .submit-btn:hover { background: var(--accent-gold-hover); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(197,160,89,0.25); }
+        .submit-btn:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+
+        .process-steps { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 24px; }
+        .ps-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 14px; text-align: center; }
+        .ps-list { display: flex; flex-direction: column; gap: 10px; }
+        .ps-item { display: flex; align-items: center; gap: 12px; }
+        .ps-dot { width: 28px; height: 28px; border-radius: 50%; background: rgba(197,160,89,0.12); border: 1.5px solid rgba(197,160,89,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: var(--accent-gold); flex-shrink: 0; }
+        .ps-item p { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .safe-note { text-align: center; font-size: 12px; color: #999; margin-top: 20px; line-height: 1.7; }
+
+        /* ——— MID-CTAs ——— */
+        .mid-cta { padding: 50px 25px; background: var(--bg-light); text-align: center; }
+        .mid-cta-dark { padding: 50px 25px; background: var(--bg-dark2); text-align: center; }
+        .mid-cta p, .mid-cta-dark p { font-size: 18px; font-weight: 900; margin-bottom: 18px; word-break: keep-all; }
+        .mid-cta p { color: var(--text-main); }
+        .mid-cta-dark p { color: #fff; }
+
+        /* ——— FOOTER ——— */
+        footer { padding: 50px 20px; text-align: center; font-size: 11px; color: #b0b0b8; border-top: 1px solid #f0f0f0; background: var(--bg-white); line-height: 2; }
+        footer a { color: #999; text-decoration: none; }
+        footer a:hover { color: var(--accent-gold); }
+
+        /* ——— ANIMATIONS ——— */
+        .fade-up { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-up.animate-ready { opacity: 0; transform: translateY(24px); }
+        .fade-up.animate-ready.visible { opacity: 1; transform: translateY(0); }
+
+        /* ═══════════════════════════════════════
+           개인정보처리방침 모달
+        ═══════════════════════════════════════ */
+        .privacy-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .privacy-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .privacy-modal {
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            background: var(--bg-white);
+            border-radius: 28px 28px 0 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(60px);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 -20px 80px rgba(0,0,0,0.2);
+        }
+        .privacy-overlay.active .privacy-modal {
+            transform: translateY(0);
+        }
+        .privacy-modal-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            background: var(--bg-white);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .privacy-modal-header-left { display: flex; flex-direction: column; gap: 2px; }
+        .privacy-modal-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .privacy-modal-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .privacy-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-sub);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .privacy-close-btn:hover {
+            background: rgba(197,160,89,0.12);
+            color: var(--accent-gold);
+        }
+        .privacy-modal-body {
+            overflow-y: auto;
+            padding: 30px 28px 50px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .privacy-modal-body::-webkit-scrollbar { width: 4px; }
+        .privacy-modal-body::-webkit-scrollbar-track { background: transparent; }
+        .privacy-modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .privacy-date {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 28px;
+            padding: 10px 16px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .privacy-section {
+            margin-bottom: 32px;
+        }
+        .privacy-section-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .privacy-section h3 {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .privacy-section p {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.9;
+            word-break: keep-all;
+            margin-bottom: 10px;
+        }
+        .privacy-section p:last-child { margin-bottom: 0; }
+        .privacy-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .privacy-table th {
+            background: var(--bg-light);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
+        }
+        .privacy-table td {
+            padding: 10px 14px;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+            line-height: 1.6;
+            vertical-align: top;
+        }
+        .privacy-table tr:last-child td { border-bottom: none; }
+        .privacy-table tr:nth-child(even) td { background: #fafafa; }
+        .privacy-highlight {
+            background: rgba(197,160,89,0.06);
+            border: 1px solid rgba(197,160,89,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .privacy-highlight p {
+            color: #5a4020 !important;
+            font-weight: 600;
+            margin-bottom: 0 !important;
+        }
+        .privacy-contact-box {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 12px;
+        }
+        .privacy-contact-box p {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 4px !important;
+            line-height: 1.7;
+        }
+        .privacy-contact-box .contact-name {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main) !important;
+            margin-bottom: 8px !important;
+        }
     </style>
 </head>
 <body>
 
+<!-- 긴박감 상단 바 -->
+<div class="urgency-bar">
+    <span class="urgency-dot"></span>
+    3월 선착순 마감 : 잔여 <span id="remainCount">3</span>팀 · 월 5팀 한정 무료 진단
+</div>
+
 <div class="container">
+
+    <!-- ===== S01 HERO ===== -->
     <section class="hero">
-        <span class="hero-tag">PREMIUM CONSULTING FOR DOCTORS</span>
-        <h1>원장님, 수익의 절반 가까이가<br><span>세금으로 사라지고 있습니다</span></h1>
-        <p>연 순수익 10억 원, 실제 납부 세액 4억 원.<br>강남 대형 병원들은 이미 이 구조를 바꿨습니다.<br><b>불법이 아닙니다. 구조의 차이일 뿐입니다.</b></p>
+        <span class="hero-tag">병·의원 절세 구조 설계 전문 | 대한민국 1% 병원의 파트너</span>
+        <h1>원장님, 매년 <span class="gold">2억</span>이<br>국세청에 그냥<br>넘어가고 있습니다</h1>
+        <p class="hero-sub">
+            연 순수익 10억 원 원장님<br>USP 구조 적용 시 <strong>연간 2억 4,700만 원 절세.</strong><br>
+            이미 <strong>47개 병원</strong>이 이 구조를 적용했습니다.<br>
+            합법적 설계의 차이입니다.
+        </p>
+        <div class="trust-badges-wrap">
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <span class="num">138억+</span>
+                    <span class="lbl">누적 절세액</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="num">47개</span>
+                    <span class="lbl">파트너 병원</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="num">0건</span>
+                    <span class="lbl">세무조사<br>2019~2025</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-cta-group">
+            <a href="#apply" class="btn-primary">지금 바로 절세 가능 금액 확인하기 →</a>
+            <a href="http://pf.kakao.com/_SxdxfxcG" class="btn-kakao" target="_blank">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.686c0 2.615 1.576 4.926 3.974 6.318L5.1 20.25a.4.4 0 00.583.44l4.3-2.857A11.2 11.2 0 0012 18.37c5.523 0 10-3.477 10-7.684S17.523 3 12 3z"/></svg>
+                카카오톡 무료 상담 바로가기
+            </a>
+        </div>
     </section>
 
-    <section class="pain-section">
+    <!-- ===== S02 PAIN POINT ===== -->
+    <section class="pain-section fade-up">
         <div class="section-header">
-            <h2>"혹시 지금 이런 상황이신가요?"</h2>
-            <p>단 하나라도 해당된다면, 원장님의 자산은 새어나가고 있습니다.</p>
+            <span class="section-tag">PAIN POINT</span>
+            <h2>지금 이 중 하나라도<br>해당되신다면,<br>구조를 바꿀 때입니다.</h2>
+            <p>해당 항목을 확인해 보세요. 즉시 절세 진단 결과를 드립니다.</p>
         </div>
-        
-        <div class="pain-list">
-            <div class="pain-item"><span class="bullet">😣</span><p>매출은 느는데, 내 통장 잔고는 왜 그대로일까?</p></div>
-            <div class="pain-item"><span class="bullet">😣</span><p>페이닥터 네트(NET) 계약으로 세금을 병원이 대납하고 있다.</p></div>
-            <div class="pain-item"><span class="bullet">😣</span><p>어설픈 MSO는 세무조사 걸릴까 두려워 시작하지 못했다.</p></div>
-            <div class="pain-item"><span class="bullet">😣</span><p>자녀에게 자산을 넘기고 싶은데 증여세가 무서워 엄두가 안 난다.</p></div>
-        </div>
-    </section>
-
-    <section class="data-section">
-        <div class="numbers-card">
-            <div class="data-header">연 순수익 10억 원 원장님 세금 시뮬레이션</div>
-            <div class="data-row">
-                <span class="label">과세표준(9억 8천만 기준) 납부 세액</span>
-                <span class="val-before">4억 700만 원</span>
-            </div>
-            <div class="data-row">
-                <span class="label">USP 절세 구조 적용 후</span>
-                <span class="val-after">1억 6,000만 원</span>
-            </div>
-            <div class="total-save">연간 절세액: 약 2억 4,700만 원</div>
-            <span class="years-tag">5년 누적 약 12억 3,500만 원의 자산 증대 효과</span>
-        </div>
-    </section>
-
-    <section class="question">
-        <div class="q-box">
-            <h3>"규모가 비슷한데, 왜 저 병원은 세금을 덜 낼까요?"</h3>
-            <p>네트워크 병원들은 MSO 구조를 통해 마케팅, 임대료, 자문료 등의 비용을 <br>별도 법인으로 합법적으로 이전합니다.<br>개인사업자의 최고세율(49.5%)이 아닌, **법인세 9~19%**라는 낮은 세율에서 <br>자산을 불리는 이것이 자산 격차의 핵심입니다.</p>
-        </div>
-    </section>
-
-    <section class="strategy">
-        <div class="strat-header">
-            <h2 style="font-size:24px; color:var(--text-main);">세무조사를 방어하는 확실한 마스터플랜</h2>
-        </div>
-        <div class="strat-grid">
-            <div class="strat-item">
-                <h4>시장에서 인정되는 적정 수수료</h4>
-                <p>제3자 견적 비교 및 SLA 계약을 상세히 문서화하여 국세청의 부당행위계산 부인을 차단합니다.</p>
-            </div>
-            <div class="strat-item">
-                <h4>실체성 있는 MSO 법인 구축</h4>
-                <p>독립 사무 공간, 전담 직원, 표준 연구노트 작성을 통해 페이퍼 컴퍼니 리스크를 원천 제거합니다.</p>
-            </div>
-            <div class="strat-item">
-                <h4>기업부설연구소 & IP 자산화</h4>
-                <p>병원 운영 알고리즘, 환자관리 시스템을 특허로 등록하여 '기술 라이선스료'를 합법화합니다.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="succession">
-        <h2 style="font-size:22px;">증여세 없이 100억 자산을 이전하는 4-Layer 구조</h2>
-        <div class="layer-diagram">
-            <div class="layer-box"><small>Layer 1</small>병원 (진료 수익 창출)</div>
-            <div class="layer-box"><small>Layer 2</small>MSO 법인 (벤처 인증 / R&D)</div>
-            <div class="layer-box"><small>Layer 3</small>자녀 지주법인 (배당 수취)</div>
-            <div class="layer-box"><small>Layer 4</small>안전한 실물 자산 취득</div>
-        </div>
-        <p style="font-size:13px; color:#666; margin-top:35px; word-break:keep-all;">이 구조에서는 수익이 '투자 이익'으로 분류되어 최고 50%의 증여세 과세 근거가 사라집니다. <br>자녀가 미성년자여도 가능합니다.</p>
-    </section>
-
-    <section class="pain-section" style="background:#fff;">
-        <h2 style="font-size:22px; text-align:center;">인건비 원가 절감 솔루션</h2>
         <ul class="pain-list">
-            <li class="pain-item"><span class="bullet">1</span><p>페이닥터 그로스 계약 전환 (닥터 1인당 연 1,500만 원 절감)</p></li>
-            <li class="pain-item"><span class="bullet">2</span><p>사내근로복지기금 도입 (원장님 경비 인정 + 닥터 세금 면제)</p></li>
-            <li class="pain-item"><span class="bullet">3</span><p>GPO 공동구매 (소모품 단가 10~20% 구조적 인하)</p></li>
+            <li class="pain-item">
+                <span class="pain-emoji">💸</span>
+                <div class="pain-text">
+                    <h4>매출 3억인데 손에 쥐는 돈은 1억도 안 된다</h4>
+                    <p>세금·인건비·대출이자가 다 먹어치우고 있습니다.<br>매출은 느는데, 통장 잔고는 왜 그대로일까요?</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-emoji">😰</span>
+                <div class="pain-text">
+                    <h4>페이닥터 NET 계약, 원장님이 세금까지 내주고 있습니다</h4>
+                    <p>NET 계약 유지 중이라면 닥터 세금까지 대납 중.<br>닥터 1인당 연 <strong>1,500만 원 손실</strong>이 발생하고 있습니다.</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-emoji">😟</span>
+                <div class="pain-text">
+                    <h4>"MSO 잘못 만들었다가 세무조사 폭탄 맞는다"는 말에 3년째 망설이고 계신가요?</h4>
+                    <p>절세 욕구는 있지만 리스크가 두려워 시작조차 못 하셨다면,<br>지금 USP의 방어 구조를 먼저 확인하십시오.</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-emoji">😣</span>
+                <div class="pain-text">
+                    <h4>10억을 자녀에게 넘기면 증여세만 2.4억</h4>
+                    <p>지금 구조에선 자산이 대를 이어 쌓이지 않습니다.<br>40대 이상 원장님이라면 지금 당장 설계가 필요합니다.</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-emoji">🤦</span>
+                <div class="pain-text">
+                    <h4>세무사 바꿔봤지만 매년 똑같은 소득세 고지서</h4>
+                    <p>"더 이상 방법이 없다"는 말만 들으셨나요?<br>신고 대행과 구조 설계는 전혀 다른 영역입니다.</p>
+                </div>
+            </li>
+            <li class="pain-item">
+                <span class="pain-emoji">🤔</span>
+                <div class="pain-text">
+                    <h4>옆 병원 원장님은 비슷한 매출인데 왜 차도 다르고 건물도 살까?</h4>
+                    <p>구조가 다르기 때문입니다. 같은 매출, 다른 세금 <br>그 격차는 지금 이 순간에도 계속 벌어지고 있습니다.</p>
+                </div>
+            </li>
         </ul>
     </section>
 
+    <!-- ===== S03 SIMULATOR ===== -->
+    <section class="simulator-section fade-up">
+        <div class="section-header">
+            <span class="section-tag">TAX SIMULATOR</span>
+            <h2>원장님의 순수익을 입력하시면<br>절세 가능 금액을 <span style="color:var(--accent-gold)">바로</span> 보여드립니다</h2>
+        </div>
+        <div class="sim-card">
+            <p class="sim-title">절세 시뮬레이터</p>
+            <p class="sim-sub">슬라이더를 움직여 연 순수익을 설정하세요</p>
+
+            <div class="slider-wrap">
+                <div class="slider-label">연 순수익</div>
+                <div class="slider-value" id="sliderDisplay">10억 원</div>
+                <input type="range" class="range-slider" id="incomeSlider" min="0" max="5" value="3" step="1">
+                <div class="slider-steps">
+                    <span>3억</span><span>5억</span><span>8억</span><span>10억</span><span>15억</span><span>20억+</span>
+                </div>
+            </div>
+
+            <div class="sim-results">
+                <div class="sim-row">
+                    <span class="sr-label">현재 납부 세액<br><small style="font-size:11px;opacity:0.6">소득세 45% + 지방소득세 4.5%</small></span>
+                    <span class="sr-val red" id="taxBefore">4억 700만 원</span>
+                </div>
+                <div class="sim-row">
+                    <span class="sr-label">USP 구조 적용 후 예상 세액<br><small style="font-size:11px;opacity:0.6">법인세 9~19% 구간 적용</small></span>
+                    <span class="sr-val green" id="taxAfter">1억 6,000만 원</span>
+                </div>
+            </div>
+            <div class="sim-highlight">
+                <div class="sh-label">🎯 연간 절세액</div>
+                <div class="sh-val" id="taxSave">2억 4,700만 원</div>
+                <div class="sh-5y">💰 5년 누적 자산 증대 효과 <strong id="tax5y">약 12억 3,500만 원</strong></div>
+            </div>
+            <p class="sim-disclaimer">※ 본 시뮬레이션은 평균적 구조 적용 기준 예시이며, 실제 절세 효과는 개별 진단 후 확정됩니다.</p>
+            <div class="sim-cta">
+                <a href="#apply" class="btn-primary">이 금액이 실제로 가능한지 확인해 드립니다 →<br><small style="font-size:13px;font-weight:600;opacity:0.8">무료 절세 진단 신청 (선착순 5팀)</small></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== S04 STRUCTURE ===== -->
+    <section class="structure-section fade-up">
+        <div class="section-header">
+            <span class="section-tag">WHY USP</span>
+            <h2>같은 매출, 다른 세금<br>그 차이는 '구조'입니다</h2>
+        </div>
+
+        <div class="compare-cards">
+            <div class="cmp-card bad">
+                <div class="cmp-lbl">일반 개인 원장님</div>
+                <div class="cmp-num">49.5%</div>
+                <div class="cmp-desc">소득세 최고세율<br>+ 지방소득세</div>
+            </div>
+            <div class="cmp-arrow">→</div>
+            <div class="cmp-card good">
+                <div class="cmp-lbl">USP 구조 적용 후</div>
+                <div class="cmp-num">16~22%</div>
+                <div class="cmp-desc">실효세율<br>법인세 9~19% 구간</div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-bottom: 20px; margin-top: 40px;">
+            <h2 style="font-size:20px;">USP는 6개 전문 영역을<br>한 곳에서 코디네이션합니다</h2>
+            <p>일반 세무사: 세금 신고만 | USP: 절세 설계부터 자산이전까지</p>
+        </div>
+        <div class="oneStop-grid">
+            <div class="os-item">
+                <div class="os-icon">📊</div>
+                <h5>세무 전략</h5>
+                <p>절세 구조 설계 및 법인세 신고</p>
+            </div>
+            <div class="os-item">
+                <div class="os-icon">⚖️</div>
+                <h5>법무</h5>
+                <p>법인 설립 · 특허 · IP 자산화</p>
+            </div>
+            <div class="os-item">
+                <div class="os-icon">👥</div>
+                <h5>노무</h5>
+                <p>페이닥터 계약 전환 · 인건비 최적화</p>
+            </div>
+            <div class="os-item">
+                <div class="os-icon">🏦</div>
+                <h5>재무·자산관리</h5>
+                <p>증여·상속 구조 설계</p>
+            </div>
+            <div class="os-item">
+                <div class="os-icon">📣</div>
+                <h5>마케팅</h5>
+                <p>MSO 활용 매출 성장</p>
+            </div>
+            <div class="os-item">
+                <div class="os-icon">🏥</div>
+                <h5>경영 전략</h5>
+                <p>병원 운영 코디네이션 총괄</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 35px;">
+            <h3 style="font-size:17px; font-weight:800; margin-bottom:15px;">비용 이전 가능 항목</h3>
+            <ul class="cost-list">
+                <li>마케팅 · 광고비</li>
+                <li>임대료</li>
+                <li>자문료</li>
+                <li>연구개발비 (R&D)</li>
+                <li>교육훈련비</li>
+                <li>소프트웨어 라이선스료</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===== S05 DEFENSE ===== -->
+    <section class="defense-section fade-up">
+        <div class="section-header">
+            <span class="section-tag" style="color:rgba(197,160,89,0.7)">DEFENSE PLAN</span>
+            <h2>"국세청이 봐도 문제없는<br>구조를 설계합니다"</h2>
+            <p>USP가 2019년 이후 세무조사를 단 한 건도 받지 않은 이유</p>
+        </div>
+        <div class="zero-badge">
+            <span class="zb-icon">🛡️</span>
+            <span class="zb-text">2019~2025 세무조사 대응 실적 0건<br>국세청 사전답변(서면질의) 완료 구조 적용</span>
+        </div>
+        <div class="defense-steps">
+            <div class="def-step">
+                <div class="def-step-header">
+                    <div class="def-num">01</div>
+                    <h4>시장에서 인정되는 적정 수수료 입증</h4>
+                </div>
+                <p>제3자 견적 3개사 비교 + SLA 계약서로 "적정 수수료" 입증 문서를 완비합니다. <br>국세청의 부당행위계산 부인을 원천 차단합니다.</p>
+            </div>
+            <div class="def-step">
+                <div class="def-step-header">
+                    <div class="def-num">02</div>
+                    <h4>실체성 있는 MSO 법인 구축</h4>
+                </div>
+                <p>독립 사무공간 + 전담직원 채용 + 업무일지·연구노트 체계화로 <br>"페이퍼컴퍼니" 의심 리스크를 원천 제거합니다.</p>
+            </div>
+            <div class="def-step">
+                <div class="def-step-header">
+                    <div class="def-num">03</div>
+                    <h4>기업부설연구소 & IP 자산화</h4>
+                </div>
+                <p>병원 운영 알고리즘·환자관리 시스템을 특허로 등록하여 "기술 라이선스료"를 합법화하고, <br>R&D 세액공제까지 추가 적용합니다.</p>
+            </div>
+        </div>
+        <div class="def-badges">
+            <div class="def-badge">✅ 세무조사 0건 (2019~2025)</div>
+            <div class="def-badge">✅ 국세청 서면질의 완료</div>
+            <div class="def-badge">✅ 세무법인 공동 검토 완료</div>
+        </div>
+        <div class="legal-note">
+            <div class="ln-title">📋 근거 법령</div>
+            <p>• 법인세법 제52조 (부당행위계산 부인)<br>
+            • 조세특례제한법 제7조 (R&D 세액공제)<br>
+            • 중소기업기본법 (벤처인증 요건)</p>
+        </div>
+    </section>
+
+    <!-- ===== S06 4-LAYER ===== -->
+    <section class="succession fade-up">
+        <span class="section-tag">4-LAYER STRUCTURE</span>
+        <h2 style="font-size:22px; font-weight:900; margin-top:10px; word-break:keep-all;">자녀에게 100억을 물려줄 때,<br>증여세를 내지 않아도 되는<br>구조가 있습니다</h2>
+        <div class="layer-diagram">
+            <div class="layer-box">
+                <div class="layer-num">LAYER 1</div>
+                <div class="layer-title">병원 (진료법인)</div>
+                <div class="layer-role">역할: 진료 수익 창출</div>
+                <div class="layer-effect">→ 의료업 비과세 혜택 유지 · 연 순수익 10억 기준</div>
+            </div>
+            <div class="layer-arrow">↓</div>
+            <div class="layer-box">
+                <div class="layer-num">LAYER 2</div>
+                <div class="layer-title">MSO 경영지원법인</div>
+                <div class="layer-role">역할: 마케팅·임대·자문비 수취 + R&D</div>
+                <div class="layer-effect">→ 법인세 9~19% 적용 · 벤처인증 시 소득공제 추가</div>
+            </div>
+            <div class="layer-arrow">↓</div>
+            <div class="layer-box">
+                <div class="layer-num">LAYER 3</div>
+                <div class="layer-title">자녀 지주법인</div>
+                <div class="layer-role">역할: MSO 배당 수취 → 자녀 자산 축적</div>
+                <div class="layer-effect">→ 배당소득세 14% 분리과세 · 증여세 과세 근거 소멸</div>
+            </div>
+            <div class="layer-arrow">↓</div>
+            <div class="layer-box">
+                <div class="layer-num">LAYER 4</div>
+                <div class="layer-title">실물자산 취득</div>
+                <div class="layer-role">역할: 부동산·금융자산 취득</div>
+                <div class="layer-effect">→ 가업상속공제 최대 600억 한도 적용 가능</div>
+            </div>
+        </div>
+        <div class="succession-stats">
+            <div class="suc-stat">
+                <div class="ss-val">50%→0%</div>
+                <div class="ss-lbl">증여세<br>절감률</div>
+            </div>
+            <div class="suc-stat">
+                <div class="ss-val">최대 600억</div>
+                <div class="ss-lbl">가업상속공제<br>한도</div>
+            </div>
+            <div class="suc-stat">
+                <div class="ss-val">14%</div>
+                <div class="ss-lbl">자녀 법인<br>배당소득세</div>
+            </div>
+        </div>
+        <p class="succession-note">자녀가 미성년자여도 가능합니다.<br><strong>(상법 제3조: 미성년자의 법인 주주권 인정, 법정대리인 동의 시)</strong><br>USP 적용 케이스 중 자녀 최소 연령 만 9세.</p>
+    </section>
+
+    <div class="mid-cta fade-up">
+        <p>자녀에게 자산을 물려줄<br>최적의 구조, 지금 설계하세요 →</p>
+        <a href="#apply" class="btn-primary" style="max-width:400px;display:block;margin:0 auto;">무료 절세 구조 진단 신청</a>
+    </div>
+
+    <!-- ===== S07 HR ===== -->
+    <section class="hr-section fade-up">
+        <div class="section-header">
+            <span class="section-tag">HR COST SOLUTION</span>
+            <h2>인건비 원가 절감 솔루션</h2>
+            <p>절세 외에도 운영 비용을 구조적으로 줄이는 3가지 방법</p>
+        </div>
+        <div class="hr-items">
+            <div class="hr-item">
+                <div class="hr-num">1</div>
+                <div>
+                    <h4>페이닥터 GROSS 계약 전환</h4>
+                    <p>현재 NET 계약이라면 원장님이 닥터의 세금을 대납하고 있습니다. <br>GROSS 계약으로 전환 시 닥터 1인당 연간 절감이 가능합니다.</p>
+                    <span class="hr-badge">닥터 1인당 연 1,500만 원 절감</span>
+                </div>
+            </div>
+            <div class="hr-item">
+                <div class="hr-num">2</div>
+                <div>
+                    <h4>사내근로복지기금 도입</h4>
+                    <p>원장님의 경비 인정과 동시에 소속 닥터의 복지 지원금은 세금 면제로 처리됩니다. <br>전략적 인재 유지에도 효과적입니다.</p>
+                    <span class="hr-badge">원장님 경비 인정 + 닥터 세금 면제</span>
+                </div>
+            </div>
+            <div class="hr-item">
+                <div class="hr-num">3</div>
+                <div>
+                    <h4>GPO 공동구매</h4>
+                    <p>MSO 법인을 활용한 공동구매 네트워크로 의료 소모품 단가를 구조적으로 인하합니다.</p>
+                    <span class="hr-badge">소모품 단가 10~20% 구조적 인하</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== S08 SOCIAL PROOF ===== -->
+    <section class="social-section fade-up">
+        <div class="section-header">
+            <span class="section-tag">CASE STUDY</span>
+            <h2>실제 적용 병원<br>케이스 스터디</h2>
+            <p>모든 사례는 원장님 동의 하에 익명 처리되었습니다.</p>
+        </div>
+        <div class="case-list">
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-who">성형외과 / 서울 강남 <span>개원 8년차 · 순수익 12억</span></div>
+                    <div class="case-save">절세 3.2억/년</div>
+                </div>
+                <div class="case-nums">
+                    <div class="case-before">
+                        <div class="cb-val">5억 1천</div>
+                        <div class="cb-lbl">적용 전 세금<br>(실효 42.5%)</div>
+                    </div>
+                    <div class="case-to">→</div>
+                    <div class="case-after">
+                        <div class="ca-val">1억 9천</div>
+                        <div class="ca-lbl">적용 후 세금<br>(실효 15.8%)</div>
+                    </div>
+                </div>
+                <p class="case-quote">MSO가 위험하다는 말을 5년 동안 들었습니다. USP는 법인 설립부터 특허 등록, <br>연구소 설립까지 6개월 만에 완성해줬고, 첫 해에만 3억 2천이 남았습니다.</p>
+                <p class="case-attr">— 강남 A성형외과 원장 (2023년 적용)</p>
+            </div>
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-who">치과 / 경기 분당 <span>페이닥터 3명 · 순수익 8억</span></div>
+                    <div class="case-save">절세+절감 2.1억/년</div>
+                </div>
+                <div class="case-nums">
+                    <div class="case-before">
+                        <div class="cb-val">3억 2천</div>
+                        <div class="cb-lbl">+ 대납 4,500만<br>세금 합계</div>
+                    </div>
+                    <div class="case-to">→</div>
+                    <div class="case-after">
+                        <div class="ca-val">1억 3천</div>
+                        <div class="ca-lbl">GROSS 전환 후<br>절세 세금</div>
+                    </div>
+                </div>
+                <p class="case-quote">페이닥터 NET 계약이 얼마나 손해인지 몰랐어요. USP에서 계약 구조를 바꾸고 <br>MSO까지 적용하니 첫 해 실수령액이 1억 8천 늘었습니다.</p>
+                <p class="case-attr">— 분당 B치과 원장 (2024년 적용)</p>
+            </div>
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-who">피부과 / 부산 <span>자녀 고1 · 자산이전 목적</span></div>
+                    <div class="case-save">증여세 절감 2.4억</div>
+                </div>
+                <div class="case-nums">
+                    <div class="case-before">
+                        <div class="cb-val">2.4억</div>
+                        <div class="cb-lbl">현금 10억 증여 시<br>예상 증여세</div>
+                    </div>
+                    <div class="case-to">→</div>
+                    <div class="case-after">
+                        <div class="ca-val">0원</div>
+                        <div class="ca-lbl">4-Layer 구조<br>적용 후</div>
+                    </div>
+                </div>
+                <p class="case-quote">자녀한테 뭔가 남겨주고 싶은데 세금이 너무 컸어요. USP의 4-Layer 구조로 <br>지주법인을 만들었고 증여세 한 푼 없이 법인 지분으로 자산을 이전했습니다.</p>
+                <p class="case-attr">— 부산 C피부과 원장 (2024년 적용)</p>
+            </div>
+        </div>
+
+        <div class="reviews-scroll">
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>"세무사 3명 바꿔봤는데 USP가 처음으로 실제 숫자를 보여줬습니다."</p>
+                <div class="ri-attr">— 내과 원장님</div>
+            </div>
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>"MSO 만들고 첫 해 법인세 신고 때 진짜로 믿기지 않았어요."</p>
+                <div class="ri-attr">— 안과 원장님</div>
+            </div>
+            <div class="review-item">
+                <div class="stars">★★★★★</div>
+                <p>"자녀 법인 만드는 게 이렇게 쉬운 줄 몰랐습니다. 6주 만에 완성됐어요."</p>
+                <div class="ri-attr">— 정형외과 원장님</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="mid-cta-dark fade-up">
+        <p style="color:#fff;">나도 이 구조가 가능한지<br>무료로 진단받기 →</p>
+        <a href="#apply" class="btn-primary" style="max-width:400px;display:block;margin:0 auto;">무료 절세 진단 신청</a>
+    </div>
+
+    <!-- ===== S09 TEAM ===== -->
+    <section class="team-section fade-up">
+        <div class="section-header">
+            <span class="section-tag" style="color:rgba(197,160,89,0.7)">EXPERT TEAM</span>
+            <h2>USP를 믿을 수 있는 이유</h2>
+            <p>세무·법무·노무·재무·마케팅 전문가가<br>원장님 한 분을 위해 원팀으로 움직입니다.</p>
+        </div>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">🏥</div>
+                <div class="team-info">
+                    <div class="team-pos">대표 / 경영전략 총괄</div>
+                    <div class="team-name">병원경영 코디네이터</div>
+                    <div class="team-cred">병원경영 컨설턴트 · 경영학 석사 · 누적 컨설팅 47개 병원+</div>
+                    <div class="team-benefit">"세무·법무·노무·재무·마케팅을 한 번에 코디네이션합니다. <br>원장님은 진료에만 집중하시면 됩니다."</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">📊</div>
+                <div class="team-info">
+                    <div class="team-pos">세무 전략 파트너</div>
+                    <div class="team-name">공인세무사</div>
+                    <div class="team-cred">빅4 세무법인 출신 · 병의원 특화 절세 구조 설계 전문</div>
+                    <div class="team-benefit">"MSO 수수료 적정성 입증부터 법인세 신고까지 완벽 처리합니다."</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">⚖️</div>
+                <div class="team-info">
+                    <div class="team-pos">법무 파트너</div>
+                    <div class="team-name">변호사 / 변리사</div>
+                    <div class="team-cred">법인설립 500건+ · 특허출원 실적 다수</div>
+                    <div class="team-benefit">"법인 설립부터 특허 등록까지 법적으로 완벽한 실체를 만듭니다."</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">👥</div>
+                <div class="team-info">
+                    <div class="team-pos">노무 파트너</div>
+                    <div class="team-name">공인노무사</div>
+                    <div class="team-cred">의료기관 특화 노무 · 페이닥터 계약 전환 전문</div>
+                    <div class="team-benefit">"페이닥터 GROSS 전환부터 사내근로복지기금까지 인건비 구조를 최적화합니다."</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">🏦</div>
+                <div class="team-info">
+                    <div class="team-pos">재무·자산관리 파트너</div>
+                    <div class="team-name">공인재무설계사</div>
+                    <div class="team-cred">상속·증여 자문 누적 200건+ · 4-Layer 구조 전문</div>
+                    <div class="team-benefit">"4-Layer 구조로 자녀에게 세금 없이 100억 자산을 이전합니다."</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">📣</div>
+                <div class="team-info">
+                    <div class="team-pos">마케팅 파트너</div>
+                    <div class="team-name">디지털마케팅 전문</div>
+                    <div class="team-cred">병원마케팅 특화 · 월 신환 증가 평균 30%+</div>
+                    <div class="team-benefit">"절세로 생긴 여유자금을 마케팅에 투자해 매출까지 키웁니다."</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== S10 FAQ ===== -->
+    <section class="faq-section fade-up">
+        <div class="section-header">
+            <span class="section-tag">FAQ</span>
+            <h2>원장님이 가장 많이<br>물어보시는 질문</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">🔒 법적 안전성</span>MSO가 탈세 아닌가요? 세무조사 걸리지 않나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">MSO는 대법원 판례와 국세청 유권해석으로 합법성이 인정된 구조입니다. 핵심은 '실체성'입니다. USP는 독립 사무공간·전담직원·계약서·연구노트를 완비하여 2019년 이후 세무조사 적발 사례 0건을 유지하고 있습니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">💬 상담 프로세스</span>무료 진단 후 억지로 계약을 강요하나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">절대 그렇지 않습니다. 무료 진단은 실제 절세 가능 금액을 숫자로 보여드리는 과정입니다. <br>진단 후 천천히 검토하시고 필요하다고 느끼실 때 결정하시면 됩니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">🤝 기존 관계</span>이미 세무사가 있는데 바꿔야 하나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">기존 세무사를 유지하셔도 됩니다. USP는 세무 신고가 아닌 '구조 설계'를 담당합니다. <br>설계 완료 후 기존 세무사와 협업하는 방식도 가능합니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">⏱️ 소요 시간</span>법인 설립이 복잡하고 시간이 많이 걸리지 않나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">USP의 표준 프로세스 기준, MSO 법인 설립부터 연구소 등록까지 평균 6~8주 내 완료됩니다. 원장님은 서명만 하시면 되도록 모든 행정 절차를 대행합니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">👨‍👧 자녀 관련</span>자녀가 미성년자인데 법인 주주가 될 수 있나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">가능합니다. 상법 제3조에 따라 법정대리인(부모)의 동의 하에 미성년자도 법인 주주로 <br>등재할 수 있습니다. 실제 USP 적용 케이스 중 자녀 최소 연령은 만 9세입니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">📊 규모 기준</span>병원 규모가 작은데 MSO가 의미 있나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">순수익 3억 원 이상이면 MSO 도입 효과가 비용 대비 확실히 납니다. <br>무료 진단에서 손익분기 시뮬레이션을 먼저 보여드립니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">💰 비용</span>컨설팅 비용은 얼마인가요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">구조 복잡도에 따라 다르며, 무료 진단 후 맞춤 제안서를 드립니다. 통상적으로 <br>1년차 절세액의 15~25% 수준이며, 효과가 없으면 환불 보장합니다. (계약서 명시)</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">🗺️ 지역</span>지방 병원도 컨설팅이 가능한가요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">전국 어디서나 가능합니다. 초기 진단은 화상 미팅으로 진행하며, 법인 설립 등 현장 업무는 <br>지역 파트너 법무사를 통해 처리합니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">🔧 기존 구조</span>기존에 어설프게 만든 MSO가 있는데 정리할 수 있나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">가능합니다. 기존 MSO의 리스크 진단 → 보완 또는 해산 후 재설계까지 원스톱으로 처리합니다. 오히려 이런 케이스에서 효과가 더 극적으로 나타납니다.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <div class="faq-q-text"><span class="faq-cat">📞 응답 속도</span>진단 신청 후 얼마나 빨리 연락이 오나요?</div>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-a">신청 후 영업일 기준 24시간 이내 담당 컨설턴트가 직접 연락을 드리고 있습니다. <br>이후 원장님과 미팅 가능한 상담 일정을 잡아드립니다.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== S11 FORM / CTA ===== -->
     <section class="form-container" id="apply">
         <div class="form-card">
+            <div class="form-badge">
+                <span>⏰ 3월 선착순 마감 · 잔여 <strong id="formRemain">3</strong>팀</span>
+            </div>
             <div class="form-header">
-                <h2>무료 절세 진단 신청</h2>
+                <h2>지금 신청하시면 24시간 내<br>절세 가능 금액을 확인하실 수 있습니다</h2>
                 <p>통상 300만 원 상당의 경영 진단 시뮬레이션 보고서를<br>월 선착순 5팀 원장님께 무료로 제공합니다.</p>
             </div>
             <form id="dbForm">
@@ -201,8 +1203,44 @@
                     <input type="tel" id="phone" required placeholder="010-0000-0000">
                 </div>
                 <div class="form-group">
-                    <label>병의원 명 / 진료과목</label>
-                    <input type="text" id="clinic" required placeholder="예: USP안과">
+                    <label>진료과목</label>
+                    <select id="clinic">
+                        <option value="">진료과목을 선택해 주세요</option>
+                        <option>내과</option><option>외과</option><option>정형외과</option>
+                        <option>피부과</option><option>성형외과</option><option>안과</option>
+                        <option>치과</option><option>한의원</option><option>기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>월 매출 구간</label>
+                    <select id="revenue">
+                        <option value="">월 매출 구간을 선택해 주세요</option>
+                        <option>3억 미만</option>
+                        <option>3억 ~ 5억</option>
+                        <option>5억 ~ 10억</option>
+                        <option>10억 이상</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>가장 급한 고민 (복수 선택 가능)</label>
+                    <div class="concern-grid">
+                        <div class="concern-item" onclick="toggleConcern(this)">
+                            <div class="concern-check"></div>
+                            <label>소득세 절감</label>
+                        </div>
+                        <div class="concern-item" onclick="toggleConcern(this)">
+                            <div class="concern-check"></div>
+                            <label>MSO 구조 설계</label>
+                        </div>
+                        <div class="concern-item" onclick="toggleConcern(this)">
+                            <div class="concern-check"></div>
+                            <label>자녀 자산 이전</label>
+                        </div>
+                        <div class="concern-item" onclick="toggleConcern(this)">
+                            <div class="concern-check"></div>
+                            <label>인건비 절감</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>병원 주소 (지역)</label>
@@ -210,6 +1248,17 @@
                 </div>
                 <button type="submit" class="submit-btn" id="submitBtn">300만 원 상당 절세 진단 신청하기</button>
             </form>
+
+            <div class="process-steps">
+                <div class="ps-title">신청 완료 후 진행 프로세스</div>
+                <div class="ps-list">
+                    <div class="ps-item"><div class="ps-dot">1</div><p><strong>24시간 내</strong> 담당 컨설턴트 직접 연락</p></div>
+                    <div class="ps-item"><div class="ps-dot">2</div><p><strong>30분</strong> 화상/전화 초기 진단</p></div>
+                    <div class="ps-item"><div class="ps-dot">3</div><p>맞춤 <strong>절세 시뮬레이션 보고서</strong> 전달</p></div>
+                    <div class="ps-item"><div class="ps-dot">4</div><p>구조 설계 제안 (선택, 강요 없음)</p></div>
+                </div>
+            </div>
+
             <div class="safe-note">
                 🔒 신청 후 최적의 절세 방향을 진단해드립니다.<br>
                 실제 숫자를 먼저 확인하신 후 천천히 결정하십시오.
@@ -218,44 +1267,342 @@
     </section>
 
     <footer>
-        <p>USP COMPANY | airfn38@uspcompany.co.kr | www.uspcompany.co.kr</p>
+        <p><strong>USP COMPANY</strong></p>
+        <p>airfn38@uspcompany.co.kr | <a href="http://www.uspcompany.co.kr" target="_blank">www.uspcompany.co.kr</a></p>
         <p>오래오래 성장하고 안정을 누릴 수 있는 대한민국 1% 병원의 파트너</p>
-        <p>© 2026 USP COMPANY. All Rights Reserved.</p>
+        <p style="margin-top:12px;">
+            <!-- 개인정보처리방침 링크: 모달 트리거 -->
+            <a href="#" onclick="openPrivacyModal(event)">개인정보처리방침</a>
+        </p>
+        <p style="margin-top:8px;">© 2026 USP COMPANY. All Rights Reserved.</p>
     </footer>
 </div>
 
+<!-- 플로팅 카카오 버튼 -->
+<a href="http://pf.kakao.com/_SxdxfxcG" class="floating-kakao" id="floatingKakao" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 10.686c0 2.615 1.576 4.926 3.974 6.318L5.1 20.25a.4.4 0 00.583.44l4.3-2.857A11.2 11.2 0 0012 18.37c5.523 0 10-3.477 10-7.684S17.523 3 12 3z"/></svg>
+    💬 카카오 상담
+</a>
+
+<!-- ═══════════════════════════════════════════════
+     개인정보처리방침 모달
+═══════════════════════════════════════════════ -->
+<div class="privacy-overlay" id="privacyOverlay" onclick="handleOverlayClick(event)">
+    <div class="privacy-modal" id="privacyModal">
+        <div class="privacy-modal-header">
+            <div class="privacy-modal-header-left">
+                <span class="privacy-modal-tag">LEGAL</span>
+                <span class="privacy-modal-title">개인정보처리방침</span>
+            </div>
+            <button class="privacy-close-btn" onclick="closePrivacyModal()">✕</button>
+        </div>
+        <div class="privacy-modal-body">
+            <span class="privacy-date">📅 시행일: 2026년 1월 1일 · 최종 개정: 2026년 3월 1일</span>
+
+            <div class="privacy-highlight">
+                <p>USP COMPANY(이하 "회사")는 정보주체의 자유와 권리 보호를 위해 「개인정보 보호법」 및 관계 법령을 준수하며, 이용자의 개인정보를 안전하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.</p>
+            </div>
+
+            <!-- 제1조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 01</div>
+                <h3>개인정보의 처리 목적</h3>
+                <p>회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>처리 목적</th>
+                        <th>상세 내용</th>
+                    </tr>
+                    <tr>
+                        <td>서비스 제공 및 상담</td>
+                        <td>무료 절세 진단 상담 신청 접수, 맞춤형 컨설팅 서비스 제공, 상담 일정 조율 및 결과 전달</td>
+                    </tr>
+                    <tr>
+                        <td>고객 관리</td>
+                        <td>고객 식별 및 본인 확인, 고객 문의 응대, 서비스 개선 및 만족도 조사</td>
+                    </tr>
+                    <tr>
+                        <td>마케팅 및 홍보</td>
+                        <td>신규 서비스 및 이벤트 안내 (별도 동의 시에 한함)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제2조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 02</div>
+                <h3>처리하는 개인정보 항목</h3>
+                <p>회사는 다음의 개인정보 항목을 처리하고 있습니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>구분</th>
+                        <th>수집 항목</th>
+                        <th>수집 방법</th>
+                    </tr>
+                    <tr>
+                        <td><strong>필수 항목</strong></td>
+                        <td>성함, 휴대폰 번호, 진료과목, 월 매출 구간, 병원 소재지(지역)</td>
+                        <td>홈페이지 상담 신청 폼</td>
+                    </tr>
+                    <tr>
+                        <td><strong>선택 항목</strong></td>
+                        <td>주요 고민 사항 (소득세 절감, MSO 구조 설계, 자녀 자산 이전, 인건비 절감)</td>
+                        <td>홈페이지 상담 신청 폼</td>
+                    </tr>
+                    <tr>
+                        <td><strong>자동 수집</strong></td>
+                        <td>접속 IP, 쿠키, 방문 일시, 서비스 이용 기록</td>
+                        <td>시스템 자동 수집</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제3조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 03</div>
+                <h3>개인정보의 처리 및 보유 기간</h3>
+                <p>회사는 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>보유 항목</th>
+                        <th>보유 기간</th>
+                        <th>근거</th>
+                    </tr>
+                    <tr>
+                        <td>상담 신청 정보</td>
+                        <td>수집일로부터 3년</td>
+                        <td>서비스 제공 및 분쟁 처리</td>
+                    </tr>
+                    <tr>
+                        <td>계약·청약 철회 기록</td>
+                        <td>5년</td>
+                        <td>전자상거래 등에서의 소비자 보호에 관한 법률</td>
+                    </tr>
+                    <tr>
+                        <td>소비자 불만·분쟁 처리 기록</td>
+                        <td>3년</td>
+                        <td>전자상거래 등에서의 소비자 보호에 관한 법률</td>
+                    </tr>
+                    <tr>
+                        <td>접속 로그</td>
+                        <td>3개월</td>
+                        <td>통신비밀보호법</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제4조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 04</div>
+                <h3>개인정보의 제3자 제공</h3>
+                <p>회사는 정보주체의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.</p>
+                <p>① 정보주체가 사전에 동의한 경우<br>② 법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</p>
+                <p>서비스 제공을 위해 아래와 같이 개인정보를 위탁하고 있습니다.</p>
+                <table class="privacy-table">
+                    <tr>
+                        <th>수탁 업체</th>
+                        <th>위탁 업무</th>
+                        <th>보유 기간</th>
+                    </tr>
+                    <tr>
+                        <td>Google LLC</td>
+                        <td>상담 신청 데이터 수집·저장 (Google Apps Script)</td>
+                        <td>위탁 계약 종료 시까지</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 제5조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 05</div>
+                <h3>정보주체의 권리·의무 및 행사 방법</h3>
+                <p>정보주체는 회사에 대해 언제든지 다음 각 호의 개인정보 보호 관련 권리를 행사할 수 있습니다.</p>
+                <p>① <strong>개인정보 열람 요구</strong><br>② <strong>오류 등이 있을 경우 정정 요구</strong><br>③ <strong>삭제 요구</strong><br>④ <strong>처리 정지 요구</strong></p>
+                <p>권리 행사는 「개인정보 보호법」 시행령 제41조제1항에 따라 서면, 전자우편, 모사전송(FAX) 등을 통하여 하실 수 있으며, 회사는 이에 대해 지체 없이 조치하겠습니다.</p>
+            </div>
+
+            <!-- 제6조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 06</div>
+                <h3>개인정보의 안전성 확보 조치</h3>
+                <p>회사는 「개인정보 보호법」 제29조에 따라 다음과 같이 안전성 확보에 필요한 기술적·관리적·물리적 조치를 하고 있습니다.</p>
+                <p>① <strong>내부관리계획 수립·시행</strong> : 개인정보의 안전한 처리를 위하여 내부관리계획을 수립하고 시행하고 있습니다.<br>② <strong>접속기록의 보관 및 위변조 방지</strong> : 개인정보처리시스템에 접속한 기록을 최소 1년 이상 보관·관리하고 있습니다.<br>③ <strong>개인정보에 대한 접근 제한</strong> : 개인정보를 처리하는 데이터베이스시스템에 대한 접근권한의 부여·변경·말소를 통하여 개인정보에 대한 접근통제를 위하여 필요한 조치를 하고 있습니다.<br>④ <strong>비인가자에 대한 출입 통제</strong> : 개인정보를 보관하고 있는 물리적 보관 장소를 별도로 두고 이에 대해 출입통제 절차를 수립·운영하고 있습니다.</p>
+            </div>
+
+            <!-- 제7조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 07</div>
+                <h3>개인정보 자동 수집 장치의 설치·운영 및 거부</h3>
+                <p>회사는 이용자에게 개별적인 맞춤서비스를 제공하기 위해 이용 정보를 저장하고 수시로 불러오는 '쿠키(cookie)'를 사용합니다.</p>
+                <p>쿠키는 웹사이트를 운영하는데 이용되는 서버(http)가 이용자의 컴퓨터 브라우저에게 보내는 소량의 정보이며 이용자들의 PC 컴퓨터내의 하드디스크에 저장되기도 합니다. 이용자는 쿠키 설치에 대한 선택권을 가지고 있습니다. 웹브라우저에서 옵션을 설정함으로써 모든 쿠키를 허용하거나, 쿠키가 저장될 때마다 확인을 거치거나, 아니면 모든 쿠키의 저장을 거부할 수 있습니다.</p>
+            </div>
+
+            <!-- 제8조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 08</div>
+                <h3>개인정보 보호책임자</h3>
+                <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 정보주체의 개인정보 관련 불만 처리 및 피해 구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+                <div class="privacy-contact-box">
+                    <p class="contact-name">🛡️ 개인정보 보호책임자</p>
+                    <p><strong>소속 / 직위:</strong> USP COMPANY / 팀장</p>
+                    <p><strong>연락처:</strong> 010-2289-4931</p>
+                    <p><strong>이메일:</strong> airfn38@uspcompany.co.kr</p>
+                    <p><strong>홈페이지:</strong> www.uspcompany.co.kr</p>
+                </div>
+                <p style="margin-top: 14px;">정보주체께서는 회사의 서비스를 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만 처리, 피해 구제 등에 관한 사항을 개인정보 보호책임자 및 담당부서로 문의하실 수 있습니다. 회사는 정보주체의 문의에 대해 지체 없이 답변 및 처리해드릴 것입니다.</p>
+            </div>
+
+            <!-- 제9조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 09</div>
+                <h3>개인정보 처리방침 변경</h3>
+                <p>① 이 개인정보처리방침은 2026년 1월 1일부터 적용됩니다.</p>
+                <p>② 이전의 개인정보처리방침은 아래에서 확인하실 수 있습니다. 본 처리방침에 변경이 있는 경우, 변경 사항을 웹사이트 공지사항을 통하여 공지합니다.</p>
+            </div>
+
+            <!-- 제10조 -->
+            <div class="privacy-section">
+                <div class="privacy-section-num">ARTICLE 10</div>
+                <h3>권익침해 구제 방법</h3>
+                <p>정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회, 한국인터넷진흥원 개인정보침해신고센터 등에 분쟁 해결이나 상담 등을 신청할 수 있습니다.</p>
+                <div class="privacy-contact-box">
+                    <p>📞 <strong>개인정보침해신고센터</strong> (한국인터넷진흥원): (국번없이) 118</p>
+                    <p>⚖️ <strong>개인정보분쟁조정위원회</strong>: (국번없이) 1833-6972</p>
+                    <p>🔍 <strong>대검찰청 사이버수사과</strong>: (국번없이) 1301</p>
+                    <p>👮 <strong>경찰청 사이버수사국</strong>: (국번없이) 182</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
-document.getElementById('dbForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerText = "진단 전송 중...";
+    // ——— 슬라이더 계산 로직 ———
+    const incomeData = [
+        { label: '3억 원',  before: 9820, after: 3600, save: 6220, save5y: 31100 },
+        { label: '5억 원',  before: 18200, after: 7000, save: 11200, save5y: 56000 },
+        { label: '8억 원',  before: 30800, after: 11800, save: 19000, save5y: 95000 },
+        { label: '10억 원', before: 40700, after: 16000, save: 24700, save5y: 123500 },
+        { label: '15억 원', before: 63200, after: 25000, save: 38200, save5y: 191000 },
+        { label: '20억 원', before: 86700, after: 34000, save: 52700, save5y: 263500 }
+    ];
 
-    const data = {
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        clinic: document.getElementById('clinic').value,
-        address: document.getElementById('address').value
-    };
+    function formatMan(val) {
+        if (val >= 10000) {
+            const uk = Math.floor(val / 10000);
+            const man = val % 10000;
+            return man > 0 ? `${uk}억 ${man.toLocaleString()}만 원` : `${uk}억 원`;
+        }
+        return `${val.toLocaleString()}만 원`;
+    }
 
-    // 구글 앱스 스크립트 웹 앱 URL을 여기에 입력하세요
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwwMgPfIyB4UAIeRMRLlCugPIL-ro89ERldPDDCwg381OmAQAmqDQ5KqKusKQjmg4YLJA/exec";
+    const slider = document.getElementById('incomeSlider');
+    function updateSim() {
+        const d = incomeData[slider.value];
+        document.getElementById('sliderDisplay').textContent = d.label;
+        animateVal('taxBefore', d.before);
+        animateVal('taxAfter', d.after);
+        animateVal('taxSave', d.save);
+        animateVal('tax5y', d.save5y);
+        const pct = (slider.value / (slider.max)) * 100;
+        slider.style.background = `linear-gradient(to right, #c5a059 ${pct}%, rgba(255,255,255,0.15) ${pct}%)`;
+    }
 
-    fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(data)
-    })
-    .then(res => { 
-        // 성공 시 다운로드 페이지(success.html)로 이동
-        location.href = "success.html"; 
-    })
-    .catch(err => {
-        alert("일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-        btn.disabled = false;
-        btn.innerText = "300만 원 상당 절세 진단 신청하기";
+    function animateVal(id, target) {
+        const el = document.getElementById(id);
+        el.textContent = formatMan(target);
+    }
+
+    slider.addEventListener('input', updateSim);
+    updateSim();
+
+    // ——— FAQ 토글 ———
+    function toggleFaq(el) {
+        const item = el.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+    }
+
+    // ——— 체크박스 ———
+    function toggleConcern(el) {
+        el.classList.toggle('selected');
+    }
+
+    // ——— 플로팅 카카오 ———
+    window.addEventListener('scroll', () => {
+        const fk = document.getElementById('floatingKakao');
+        if (window.scrollY > 200) fk.classList.add('visible');
+        else fk.classList.remove('visible');
     });
-});
-</script>
 
+    // ——— Intersection Observer (fade-up) ———
+    setTimeout(() => {
+        document.querySelectorAll('.fade-up').forEach(el => el.classList.add('animate-ready'));
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+        }, { threshold: 0.05 });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }, 300);
+
+    // ——— 폼 제출 ———
+    document.getElementById('dbForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "진단 전송 중...";
+
+        const concerns = Array.from(document.querySelectorAll('.concern-item.selected label')).map(l => l.textContent);
+        const data = {
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            clinic: document.getElementById('clinic').value,
+            revenue: document.getElementById('revenue').value,
+            concerns: concerns.join(', '),
+            address: document.getElementById('address').value
+        };
+
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzKNVU_ch5pc6h1nkM7fafHw_909FhMkLtIw1AlZ2lneoVdYUOBSkNa8YAuAWe8__5fDQ/exec";
+
+        fetch(GAS_URL, { method: 'POST', body: JSON.stringify(data) })
+        .then(() => { location.href = "success.html"; })
+        .catch(() => {
+            alert("일시적인 오류가 발생했습니다. 카카오톡으로 문의해 주세요.");
+            btn.disabled = false;
+            btn.innerText = "300만 원 상당 절세 진단 신청하기";
+        });
+    });
+
+    // ═══════════════════════════════════════
+    // 개인정보처리방침 모달 제어
+    // ═══════════════════════════════════════
+    function openPrivacyModal(e) {
+        if (e) e.preventDefault();
+        const overlay = document.getElementById('privacyOverlay');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // 모달 본문 스크롤을 항상 최상단으로
+        document.querySelector('.privacy-modal-body').scrollTop = 0;
+    }
+
+    function closePrivacyModal() {
+        const overlay = document.getElementById('privacyOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function handleOverlayClick(e) {
+        // 오버레이 배경 클릭 시 닫기 (모달 내부 클릭은 무시)
+        if (e.target === document.getElementById('privacyOverlay')) {
+            closePrivacyModal();
+        }
+    }
+
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePrivacyModal();
+    });
+</script>
 </body>
 </html>
